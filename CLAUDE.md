@@ -42,6 +42,8 @@ AI output shape for step 1:
 
 `amount_source` is "stated" or "estimated". Keep this flag all the way through to the final output.
 
+Volume amounts ("1 cup of rice") count as "stated": the AI converts them to grams and shows the conversion in `assumption`.
+
 Validation rules:
 
 - Pydantic models for every payload; required fields, correct types, no negative numbers.
@@ -50,6 +52,8 @@ Validation rules:
 - On failure: retry the AI call once, then return a clear error. Never pass unvalidated data downstream.
 - Schema failures are errors. Sanity checks (energy gap, over 2,000 g) are warnings: the result is still returned with the flag shown.
 - Estimates must be visible to the user. For every estimated amount, tell them the assumed serving, encourage precise measurements for accuracy, and ask them to double check their input.
+- Counts and sizes ("2 eggs", "a medium potato") are "estimated". Estimated portions of calorie-dense foods (250 kcal per 100 g or more) get an extra warning, since size differences change the total more.
+- User-facing messages use a neutral voice, never first person ("An estimated 190 g of mashed potato was used...", not "We assumed...").
 
 AWS services:
 
