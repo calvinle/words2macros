@@ -1,0 +1,59 @@
+import json
+from pathlib import Path
+
+import pytest
+
+from words2macros.models import Nutrients
+from words2macros.usda import parse_search_response
+
+FIXTURES = Path(__file__).parent / "fixtures"
+
+
+def load(name: str) -> dict:
+    return json.loads((FIXTURES / name).read_text())
+
+
+def test_parse_mashed_potatoes():
+    matches = parse_search_response(load("usda_search_mashed_potatoes.json"))
+
+    assert len(matches) == 5
+    first = matches[0]
+    assert first.source == "usda"
+    assert first.fdc_id == 2709492
+    assert first.description == "Potato, mashed, NFS"
+    assert first.per_100g == Nutrients(calories_kcal=114, protein_g=2.15, carbs_g=17.6, fat_g=4.07)
+
+
+def test_parse_keeps_search_order():
+    matches = parse_search_response(load("usda_search_gravy.json"))
+
+    assert [m.description for m in matches] == [
+        "Biscuit with gravy",
+        "Beef with gravy",
+        "Chicken with gravy",
+        "Gravy, beef",
+        "Gravy, NFS",
+    ]
+
+
+def test_parse_no_results():
+    assert parse_search_response(load("usda_search_xqzvplorbnut.json")) == []
+
+
+def test_record_missing_a_macro_is_skipped():
+    data = load("usda_search_mashed_potatoes.json")
+    first = data["foods"][0]
+    first["foodNutrients"] = [n for n in first["foodNutrients"] if n["nutrientId"] != 1004]
+
+    matches = parse_search_response(data)
+
+    assert len(matches) == 4
+    assert 2709492 not in [m.fdc_id for m in matches]
+
+
+@pytest.mark.parametrize("bad", [{"value": None}, {"value": -1}])
+def test_record_with_bad_value_is_skipped(bad):
+    data = load("usda_search_mashed_potatoes.json")
+    data["foods"][0]["foodNutrients"][0].update(bad)
+
+    assert len(parse_search_response(data)) == 4

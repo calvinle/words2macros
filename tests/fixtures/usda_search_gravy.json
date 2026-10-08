@@ -1,0 +1,160 @@
+{
+ "totalHits": 405,
+ "foods": [
+  {
+   "fdcId": 2708744,
+   "description": "Biscuit with gravy",
+   "dataType": "Survey (FNDDS)",
+   "foodNutrients": [
+    {
+     "value": 6.2,
+     "nutrientName": "Protein",
+     "nutrientId": 1003,
+     "unitName": "G"
+    },
+    {
+     "value": 14.68,
+     "nutrientName": "Total lipid (fat)",
+     "nutrientId": 1004,
+     "unitName": "G"
+    },
+    {
+     "value": 16.98,
+     "nutrientName": "Carbohydrate, by difference",
+     "nutrientId": 1005,
+     "unitName": "G"
+    },
+    {
+     "value": 224,
+     "nutrientName": "Energy",
+     "nutrientId": 1008,
+     "unitName": "KCAL"
+    }
+   ]
+  },
+  {
+   "fdcId": 2706379,
+   "description": "Beef with gravy",
+   "dataType": "Survey (FNDDS)",
+   "foodNutrients": [
+    {
+     "value": 21.56,
+     "nutrientName": "Protein",
+     "nutrientId": 1003,
+     "unitName": "G"
+    },
+    {
+     "value": 7.05,
+     "nutrientName": "Total lipid (fat)",
+     "nutrientId": 1004,
+     "unitName": "G"
+    },
+    {
+     "value": 1.58,
+     "nutrientName": "Carbohydrate, by difference",
+     "nutrientId": 1005,
+     "unitName": "G"
+    },
+    {
+     "value": 156,
+     "nutrientName": "Energy",
+     "nutrientId": 1008,
+     "unitName": "KCAL"
+    }
+   ]
+  },
+  {
+   "fdcId": 2706428,
+   "description": "Chicken with gravy",
+   "dataType": "Survey (FNDDS)",
+   "foodNutrients": [
+    {
+     "value": 18.88,
+     "nutrientName": "Protein",
+     "nutrientId": 1003,
+     "unitName": "G"
+    },
+    {
+     "value": 5.21,
+     "nutrientName": "Total lipid (fat)",
+     "nutrientId": 1004,
+     "unitName": "G"
+    },
+    {
+     "value": 1.58,
+     "nutrientName": "Carbohydrate, by difference",
+     "nutrientId": 1005,
+     "unitName": "G"
+    },
+    {
+     "value": 129,
+     "nutrientName": "Energy",
+     "nutrientId": 1008,
+     "unitName": "KCAL"
+    }
+   ]
+  },
+  {
+   "fdcId": 2707145,
+   "description": "Gravy, beef",
+   "dataType": "Survey (FNDDS)",
+   "foodNutrients": [
+    {
+     "value": 3.75,
+     "nutrientName": "Protein",
+     "nutrientId": 1003,
+     "unitName": "G"
+    },
+    {
+     "value": 2.36,
+     "nutrientName": "Total lipid (fat)",
+     "nutrientId": 1004,
+     "unitName": "G"
+    },
+    {
+     "value": 4.81,
+     "nutrientName": "Carbohydrate, by difference",
+     "nutrientId": 1005,
+     "unitName": "G"
+    },
+    {
+     "value": 53,
+     "nutrientName": "Energy",
+     "nutrientId": 1008,
+     "unitName": "KCAL"
+    }
+   ]
+  },
+  {
+   "fdcId": 2707149,
+   "description": "Gravy, NFS",
+   "dataType": "Survey (FNDDS)",
+   "foodNutrients": [
+    {
+     "value": 3.75,
+     "nutrientName": "Protein",
+     "nutrientId": 1003,
+     "unitName": "G"
+    },
+    {
+     "value": 2.36,
+     "nutrientName": "Total lipid (fat)",
+     "nutrientId": 1004,
+     "unitName": "G"
+    },
+    {
+     "value": 4.81,
+     "nutrientName": "Carbohydrate, by difference",
+     "nutrientId": 1005,
+     "unitName": "G"
+    },
+    {
+     "value": 53,
+     "nutrientName": "Energy",
+     "nutrientId": 1008,
+     "unitName": "KCAL"
+    }
+   ]
+  }
+ ]
+}

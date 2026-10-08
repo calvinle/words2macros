@@ -1,0 +1,160 @@
+{
+ "totalHits": 503,
+ "foods": [
+  {
+   "fdcId": 2709492,
+   "dataType": "Survey (FNDDS)",
+   "foodNutrients": [
+    {
+     "nutrientId": 1003,
+     "unitName": "G",
+     "value": 2.15,
+     "nutrientName": "Protein"
+    },
+    {
+     "nutrientId": 1004,
+     "unitName": "G",
+     "value": 4.07,
+     "nutrientName": "Total lipid (fat)"
+    },
+    {
+     "nutrientId": 1005,
+     "unitName": "G",
+     "value": 17.6,
+     "nutrientName": "Carbohydrate, by difference"
+    },
+    {
+     "nutrientId": 1008,
+     "unitName": "KCAL",
+     "value": 114,
+     "nutrientName": "Energy"
+    }
+   ],
+   "description": "Potato, mashed, NFS"
+  },
+  {
+   "fdcId": 2709708,
+   "dataType": "Survey (FNDDS)",
+   "foodNutrients": [
+    {
+     "nutrientId": 1003,
+     "unitName": "G",
+     "value": 1.89,
+     "nutrientName": "Protein"
+    },
+    {
+     "nutrientId": 1004,
+     "unitName": "G",
+     "value": 2.56,
+     "nutrientName": "Total lipid (fat)"
+    },
+    {
+     "nutrientId": 1005,
+     "unitName": "G",
+     "value": 17.22,
+     "nutrientName": "Carbohydrate, by difference"
+    },
+    {
+     "nutrientId": 1008,
+     "unitName": "KCAL",
+     "value": 99,
+     "nutrientName": "Energy"
+    }
+   ],
+   "description": "Sweet potato, casserole or mashed"
+  },
+  {
+   "fdcId": 2709500,
+   "dataType": "Survey (FNDDS)",
+   "foodNutrients": [
+    {
+     "nutrientId": 1003,
+     "unitName": "G",
+     "value": 2.07,
+     "nutrientName": "Protein"
+    },
+    {
+     "nutrientId": 1004,
+     "unitName": "G",
+     "value": 7.22,
+     "nutrientName": "Total lipid (fat)"
+    },
+    {
+     "nutrientId": 1005,
+     "unitName": "G",
+     "value": 16.77,
+     "nutrientName": "Carbohydrate, by difference"
+    },
+    {
+     "nutrientId": 1008,
+     "unitName": "KCAL",
+     "value": 138,
+     "nutrientName": "Energy"
+    }
+   ],
+   "description": "Potato, mashed, from restaurant"
+  },
+  {
+   "fdcId": 2709495,
+   "dataType": "Survey (FNDDS)",
+   "foodNutrients": [
+    {
+     "nutrientId": 1003,
+     "unitName": "G",
+     "value": 1.97,
+     "nutrientName": "Protein"
+    },
+    {
+     "nutrientId": 1004,
+     "unitName": "G",
+     "value": 5.01,
+     "nutrientName": "Total lipid (fat)"
+    },
+    {
+     "nutrientId": 1005,
+     "unitName": "G",
+     "value": 13.29,
+     "nutrientName": "Carbohydrate, by difference"
+    },
+    {
+     "nutrientId": 1008,
+     "unitName": "KCAL",
+     "value": 106,
+     "nutrientName": "Energy"
+    }
+   ],
+   "description": "Potato, mashed, ready-to-heat"
+  },
+  {
+   "fdcId": 170699,
+   "dataType": "SR Legacy",
+   "foodNutrients": [
+    {
+     "nutrientId": 1003,
+     "unitName": "G",
+     "value": 1.65,
+     "nutrientName": "Protein"
+    },
+    {
+     "nutrientId": 1004,
+     "unitName": "G",
+     "value": 2.82,
+     "nutrientName": "Total lipid (fat)"
+    },
+    {
+     "nutrientId": 1005,
+     "unitName": "G",
+     "value": 14.6,
+     "nutrientName": "Carbohydrate, by difference"
+    },
+    {
+     "nutrientId": 1008,
+     "unitName": "KCAL",
+     "value": 89.0,
+     "nutrientName": "Energy"
+    }
+   ],
+   "description": "Fast foods, potato, mashed"
+  }
+ ]
+}
