@@ -4,20 +4,12 @@ The AI only parses. It never returns nutrient numbers, and its reply is checked
 against ParseResult before anything else uses it.
 """
 
-import json
-import os
 from typing import Any
 
-import boto3
-from botocore.config import Config
-from pydantic import ValidationError
-
+from words2macros.bedrock import ask_validated, make_client
 from words2macros.models import ParseResult
 
-MODEL_ID = os.environ.get("BEDROCK_MODEL_ID", "global.anthropic.claude-haiku-4-5-20251001-v1:0")
 MAX_INPUT_CHARS = 2000
-MAX_OUTPUT_TOKENS = 2000
-ATTEMPTS = 2  # first try plus one retry, per CLAUDE.md
 
 SYSTEM_PROMPT = """\
 You turn a person's description of what they ate into a list of foods with weights in grams.
@@ -25,7 +17,9 @@ You turn a person's description of what they ate into a list of foods with weigh
 Rules:
 - One item per distinct food. Keep sauces, toppings, spreads and drinks as separate items.
 - name: the food in plain words a nutrition database would use, such as "russet potato" or \
-"beef gravy". Do not include amounts or preparation in the name.
+"gravy". Do not include amounts or preparation in the name.
+- Keep the person's wording for the food. Do not add a type, flavor or variety they did not \
+say: "gravy" stays "gravy", not "beef gravy"; "cheese" stays "cheese", not "cheddar cheese".
 - preparation: how it was prepared, such as "mashed", "grilled" or "raw". Use null if unknown.
 - grams: the weight of the food as eaten. For cooked food, use the cooked weight.
 - amount_source:
@@ -75,13 +69,6 @@ class ParseError(Exception):
     """
 
 
-def make_client() -> Any:
-    # Adaptive retries handle Bedrock throttling and brief outages.
-    return boto3.client(
-        "bedrock-runtime", config=Config(retries={"max_attempts": 5, "mode": "adaptive"})
-    )
-
-
 def parse_meal(text: str, client: Any = None) -> ParseResult:
     text = text.strip()
     if not text:
@@ -89,45 +76,27 @@ def parse_meal(text: str, client: Any = None) -> ParseResult:
     if len(text) > MAX_INPUT_CHARS:
         raise ParseError(f"The meal description must be under {MAX_INPUT_CHARS:,} characters.")
 
-    client = client or make_client()
-    for _ in range(ATTEMPTS):
-        reply = _ask_model(client, text)
-        try:
-            data = json.loads(reply)
-        except json.JSONDecodeError:
-            continue
-        if isinstance(data, dict) and data.get("items") == []:
-            raise ParseError(
-                "No foods were found in that description. Try listing what was eaten, "
-                "for example: '2 eggs and a slice of toast'."
-            )
-        try:
-            return ParseResult.model_validate(data)
-        except ValidationError:
-            continue
-    raise ParseError(
-        "The meal description couldn't be understood. Try rephrasing it, with one food per "
-        "phrase and amounts where known."
+    result = ask_validated(
+        client or make_client(),
+        system=SYSTEM_PROMPT,
+        text=text,
+        schema=OUTPUT_SCHEMA,
+        schema_name="meal_parse",
+        validate=_validate,
     )
+    if result is None:
+        raise ParseError(
+            "The meal description couldn't be understood. Try rephrasing it, with one food per "
+            "phrase and amounts where known."
+        )
+    return result
 
 
-def _ask_model(client: Any, text: str) -> str:
-    response = client.converse(
-        modelId=MODEL_ID,
-        system=[{"text": SYSTEM_PROMPT}],
-        messages=[{"role": "user", "content": [{"text": text}]}],
-        inferenceConfig={"maxTokens": MAX_OUTPUT_TOKENS, "temperature": 0},
-        outputConfig={
-            "textFormat": {
-                "type": "json_schema",
-                "structure": {
-                    "jsonSchema": {
-                        "name": "meal_parse",
-                        "description": "Foods and gram amounts from a meal description",
-                        "schema": json.dumps(OUTPUT_SCHEMA),
-                    }
-                },
-            }
-        },
-    )
-    return response["output"]["message"]["content"][0]["text"]
+def _validate(data: Any) -> ParseResult:
+    if isinstance(data, dict) and data.get("items") == []:
+        # Not a bad reply, so don't retry: there is simply no food in the text.
+        raise ParseError(
+            "No foods were found in that description. Try listing what was eaten, "
+            "for example: '2 eggs and a slice of toast'."
+        )
+    return ParseResult.model_validate(data)

@@ -55,8 +55,8 @@ def test_estimated_calorie_dense_food_warns():
 
     assert warning.code == "CALORIE_DENSE_ESTIMATE"
     assert warning.message == (
-        "Cheddar cheese is calorie dense (404 kcal per 100 g), so the estimated portion has a "
-        "big effect on the total. Weigh or measure it for an accurate result."
+        "The estimated portion of cheddar cheese has a big effect on the total because this "
+        "food is calorie dense (404 kcal per 100 g). Weigh or measure it for an accurate result."
     )
 
 
@@ -81,7 +81,7 @@ def test_ai_estimated_nutrients_warn():
 
     assert warning.code == "NUTRIENTS_ESTIMATED"
     assert warning.item_index == 2
-    assert warning.message.startswith("House gravy was not found")
+    assert warning.message.startswith("No USDA database record was found for house gravy,")
 
 
 def test_usda_nutrients_do_not_warn():
@@ -115,7 +115,7 @@ def test_over_2000g_warns():
 
     assert warning.code == "OVER_2000G"
     assert warning.message == (
-        "Mashed russet potato is listed as 2,500 g, which is unusually large. "
+        "The amount for mashed russet potato is 2,500 g, which is unusually large. "
         "Double check the amount."
     )
 

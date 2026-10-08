@@ -22,10 +22,6 @@ def label(item: ParsedItem) -> str:
     return f"{item.preparation} {item.name}" if item.preparation else item.name
 
 
-def capitalized(text: str) -> str:
-    return text[:1].upper() + text[1:]
-
-
 def format_grams(grams: float) -> str:
     """190.0 -> "190", 2500 -> "2,500", 12.5 -> "12.5"."""
     return f"{grams:,.1f}".rstrip("0").rstrip(".")
@@ -57,9 +53,9 @@ def check_calorie_dense_estimate(
         MealWarning(
             code="CALORIE_DENSE_ESTIMATE",
             message=(
-                f"{capitalized(label(item))} is calorie dense ({kcal:.0f} kcal per 100 g), so "
-                "the estimated portion has a big effect on the total. Weigh or measure it for "
-                "an accurate result."
+                f"The estimated portion of {label(item)} has a big effect on the total because "
+                f"this food is calorie dense ({kcal:.0f} kcal per 100 g). Weigh or measure it "
+                "for an accurate result."
             ),
             item_index=index,
         )
@@ -73,8 +69,8 @@ def check_nutrients_estimated(item: ParsedItem, match: FoodMatch, index: int) ->
         MealWarning(
             code="NUTRIENTS_ESTIMATED",
             message=(
-                f"{capitalized(label(item))} was not found in the USDA database, so its "
-                "nutrients are an AI estimate. Treat these numbers as rough."
+                f"No USDA database record was found for {label(item)}, so the nutrients shown "
+                "are an AI estimate. Treat these numbers as rough."
             ),
             item_index=index,
         )
@@ -107,8 +103,8 @@ def check_weight(item: ParsedItem, index: int) -> list[MealWarning]:
         MealWarning(
             code="OVER_2000G",
             message=(
-                f"{capitalized(label(item))} is listed as {format_grams(item.grams)} g, "
-                "which is unusually large. Double check the amount."
+                f"The amount for {label(item)} is {format_grams(item.grams)} g, which is "
+                "unusually large. Double check the amount."
             ),
             item_index=index,
         )
