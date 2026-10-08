@@ -1,5 +1,6 @@
 from words2macros.checks import (
     check_amount_estimated,
+    check_calorie_dense_estimate,
     check_energy,
     check_nutrients_estimated,
     check_weight,
@@ -41,10 +42,32 @@ def test_estimated_amount_warns_with_assumption():
     assert warning.code == "AMOUNT_ESTIMATED"
     assert warning.item_index == 0
     assert warning.message == (
-        "No amount was given for mashed russet potato, so we assumed 1 medium russet (190 g). "
+        "An estimated 190 g of mashed russet potato was used (assumed: 1 medium russet). "
         "For more accurate results, enter a measured amount (grams, cups, etc.) and double "
         "check your input."
     )
+
+
+def test_estimated_calorie_dense_food_warns():
+    cheddar = item(name="cheddar cheese", preparation=None, grams=28, assumption="1 slice")
+
+    [warning] = check_calorie_dense_estimate(cheddar, match(calories_kcal=404), 0)
+
+    assert warning.code == "CALORIE_DENSE_ESTIMATE"
+    assert warning.message == (
+        "Cheddar cheese is calorie dense (404 kcal per 100 g), so the estimated portion has a "
+        "big effect on the total. Weigh or measure it for an accurate result."
+    )
+
+
+def test_estimated_low_density_food_does_not_warn():
+    assert check_calorie_dense_estimate(item(), match(), 0) == []
+
+
+def test_stated_calorie_dense_food_does_not_warn():
+    stated = item(amount_source="stated", assumption=None)
+
+    assert check_calorie_dense_estimate(stated, match(calories_kcal=404), 0) == []
 
 
 def test_stated_amount_does_not_warn():
@@ -58,7 +81,7 @@ def test_ai_estimated_nutrients_warn():
 
     assert warning.code == "NUTRIENTS_ESTIMATED"
     assert warning.item_index == 2
-    assert "house gravy" in warning.message
+    assert warning.message.startswith("House gravy was not found")
 
 
 def test_usda_nutrients_do_not_warn():
