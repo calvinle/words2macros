@@ -7,6 +7,7 @@ against ParseResult before anything else uses it.
 from typing import Any
 
 from words2macros.bedrock import ask_validated, make_client
+from words2macros.errors import UserFacingError
 from words2macros.models import ParseResult
 
 MAX_INPUT_CHARS = 2000
@@ -62,19 +63,21 @@ OUTPUT_SCHEMA = {
 }
 
 
-class ParseError(Exception):
-    """The meal description could not be turned into a valid parse. Safe to show users.
+class ParseError(UserFacingError):
+    """The meal description could not be turned into a valid parse.
 
-    Messages use a neutral voice (no "we").
+    Codes: INVALID_TEXT, NO_FOOD_FOUND, UNPARSEABLE.
     """
 
 
 def parse_meal(text: str, client: Any = None) -> ParseResult:
     text = text.strip()
     if not text:
-        raise ParseError("The meal description is empty. Enter what was eaten.")
+        raise ParseError("INVALID_TEXT", "The meal description is empty. Enter what was eaten.")
     if len(text) > MAX_INPUT_CHARS:
-        raise ParseError(f"The meal description must be under {MAX_INPUT_CHARS:,} characters.")
+        raise ParseError(
+            "INVALID_TEXT", f"The meal description must be under {MAX_INPUT_CHARS:,} characters."
+        )
 
     result = ask_validated(
         client or make_client(),
@@ -86,8 +89,9 @@ def parse_meal(text: str, client: Any = None) -> ParseResult:
     )
     if result is None:
         raise ParseError(
+            "UNPARSEABLE",
             "The meal description couldn't be understood. Try rephrasing it, with one food per "
-            "phrase and amounts where known."
+            "phrase and amounts where known.",
         )
     return result
 
@@ -96,7 +100,8 @@ def _validate(data: Any) -> ParseResult:
     if isinstance(data, dict) and data.get("items") == []:
         # Not a bad reply, so don't retry: there is simply no food in the text.
         raise ParseError(
+            "NO_FOOD_FOUND",
             "No foods were found in that description. Try listing what was eaten, "
-            "for example: '2 eggs and a slice of toast'."
+            "for example: '2 eggs and a slice of toast'.",
         )
     return ParseResult.model_validate(data)

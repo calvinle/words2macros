@@ -1,0 +1,11 @@
+{
+  "version": "2.0",
+  "routeKey": "POST /analyze",
+  "rawPath": "/analyze",
+  "headers": { "content-type": "application/json" },
+  "requestContext": {
+    "http": { "method": "POST", "path": "/analyze" }
+  },
+  "body": "{\"text\": \"I had mashed potatoes from a medium russet potato with a serving of gravy.\"}",
+  "isBase64Encoded": false
+}

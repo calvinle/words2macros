@@ -14,6 +14,7 @@ from typing import Any
 
 from pydantic import ValidationError
 
+from words2macros.errors import UserFacingError
 from words2macros.models import FoodMatch, Nutrients
 
 SEARCH_URL = "https://api.nal.usda.gov/fdc/v1/foods/search"
@@ -33,8 +34,11 @@ NUTRIENT_IDS = {
 }
 
 
-class UsdaError(Exception):
-    """The USDA API could not be reached or returned an error. Safe to show users."""
+class UsdaError(UserFacingError):
+    """The USDA API could not be reached or returned an error."""
+
+    def __init__(self, message: str):
+        super().__init__("NUTRITION_DB_UNAVAILABLE", message)
 
 
 def search_foods(

@@ -4,6 +4,7 @@ Each model rejects data that does not match its shape, so nothing unvalidated
 reaches the next step. Field names carry their units (grams, kcal).
 """
 
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -87,8 +88,16 @@ class MealWarning(StrictModel):
 
 
 class MealResult(StrictModel):
-    """What the API returns for one described meal."""
+    """Calculated and checked macros for one described meal."""
 
     items: list[ItemResult] = Field(min_length=1)
     totals: Nutrients
     warnings: list[MealWarning] = Field(default_factory=list)
+
+
+class AnalyzeResponse(MealResult):
+    """The POST /analyze success body: the meal result plus request details."""
+
+    text: str  # the original input, echoed back
+    request_id: str  # matches the Lambda log line for this request
+    analyzed_at: datetime  # UTC

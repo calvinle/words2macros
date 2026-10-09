@@ -11,6 +11,7 @@ from typing import Any
 
 from words2macros.bedrock import ask_validated
 from words2macros.checks import label
+from words2macros.errors import UserFacingError
 from words2macros.models import FoodMatch, ParsedItem
 from words2macros.usda import search_foods
 
@@ -58,8 +59,11 @@ ESTIMATE_SCHEMA = {
 NO_MATCH = object()  # the AI validly answered "none of these fit"
 
 
-class MatchError(Exception):
-    """No usable food record or estimate. Safe to show users (neutral voice)."""
+class MatchError(UserFacingError):
+    """No usable food record or estimate."""
+
+    def __init__(self, message: str):
+        super().__init__("MATCH_FAILED", message)
 
 
 def match_item(
