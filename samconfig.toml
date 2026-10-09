@@ -1,0 +1,14 @@
+version = 0.1
+
+[default.global.parameters]
+stack_name = "words2macros"
+region = "us-east-1"
+
+[default.build.parameters]
+cached = true
+
+[default.deploy.parameters]
+resolve_s3 = true
+s3_prefix = "words2macros"
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true

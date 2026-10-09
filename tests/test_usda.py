@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from words2macros import usda
 from words2macros.models import Nutrients
 from words2macros.usda import parse_search_response
 
@@ -57,3 +58,33 @@ def test_record_with_bad_value_is_skipped(bad):
     data["foods"][0]["foodNutrients"][0].update(bad)
 
     assert len(parse_search_response(data)) == 4
+
+
+@pytest.fixture
+def fresh_key_cache():
+    usda.get_api_key.cache_clear()
+    yield
+    usda.get_api_key.cache_clear()
+
+
+def test_api_key_from_env(monkeypatch, fresh_key_cache):
+    monkeypatch.setenv("USDA_API_KEY", "local-key")
+
+    assert usda.get_api_key() == "local-key"
+
+
+def test_api_key_from_ssm_is_read_once(monkeypatch, fresh_key_cache):
+    calls = []
+
+    class FakeSsm:
+        def get_parameter(self, **kwargs):
+            calls.append(kwargs)
+            return {"Parameter": {"Value": "ssm-key"}}
+
+    monkeypatch.delenv("USDA_API_KEY", raising=False)
+    monkeypatch.setenv("USDA_API_KEY_PARAMETER", "/words2macros/usda-api-key")
+    monkeypatch.setattr(usda.boto3, "client", lambda service: FakeSsm())
+
+    assert usda.get_api_key() == "ssm-key"
+    assert usda.get_api_key() == "ssm-key"
+    assert calls == [{"Name": "/words2macros/usda-api-key", "WithDecryption": True}]

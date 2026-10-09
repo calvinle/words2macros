@@ -5,6 +5,7 @@ foods as eaten ("Potato, mashed"). Branded products are left out on purpose.
 Search results list nutrients per 100 g.
 """
 
+import functools
 import json
 import os
 import urllib.error
@@ -12,6 +13,7 @@ import urllib.parse
 import urllib.request
 from typing import Any
 
+import boto3
 from pydantic import ValidationError
 
 from words2macros.errors import UserFacingError
@@ -41,11 +43,24 @@ class UsdaError(UserFacingError):
         super().__init__("NUTRITION_DB_UNAVAILABLE", message)
 
 
+@functools.cache
+def get_api_key() -> str:
+    """USDA_API_KEY locally (from .env); on Lambda, the SSM parameter it names.
+
+    Cached, so Lambda reads SSM once per cold start rather than on every request.
+    """
+    if key := os.environ.get("USDA_API_KEY"):
+        return key
+    ssm = boto3.client("ssm")
+    response = ssm.get_parameter(Name=os.environ["USDA_API_KEY_PARAMETER"], WithDecryption=True)
+    return response["Parameter"]["Value"]
+
+
 def search_foods(
     query: str, page_size: int = DEFAULT_PAGE_SIZE, api_key: str | None = None
 ) -> list[FoodMatch]:
     """Top matching food records for a query, best first. Empty if nothing matched."""
-    api_key = api_key or os.environ["USDA_API_KEY"]
+    api_key = api_key or get_api_key()
     url = f"{SEARCH_URL}?{urllib.parse.urlencode({'api_key': api_key})}"
     body = json.dumps({"query": query, "dataType": DATA_TYPES, "pageSize": page_size})
     request = urllib.request.Request(

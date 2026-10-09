@@ -8,3 +8,4 @@ dist/
 *.egg-info/
 .env
 .claude/settings.local.json
+.aws-sam/

@@ -1,0 +1,91 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: words2macros - turns a meal description into validated macros
+
+Parameters:
+  ModelName:
+    Type: String
+    Default: anthropic.claude-haiku-4-5-20251001-v1:0
+    Description: Bedrock model, called through its global cross-Region inference profile
+  UsdaKeyParameter:
+    Type: String
+    Default: /words2macros/usda-api-key
+    Description: SSM SecureString holding the USDA API key (created outside this template)
+
+Resources:
+  AnalyzeApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins: ["*"] # lock to the frontend's address once it exists
+        AllowMethods: [POST]
+        AllowHeaders: [content-type]
+      DefaultRouteSettings:
+        # Public endpoint with no login: cap how fast Bedrock costs can grow.
+        ThrottlingRateLimit: 5
+        ThrottlingBurstLimit: 10
+
+  AnalyzeFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: .
+      Handler: words2macros.handler.lambda_handler
+      Runtime: python3.13
+      Architectures: [arm64]
+      MemorySize: 512
+      Timeout: 29 # just under the HTTP API's 30-second limit
+      Environment:
+        Variables:
+          BEDROCK_MODEL_ID: !Sub global.${ModelName}
+          USDA_API_KEY_PARAMETER: !Ref UsdaKeyParameter
+      Policies:
+        - Statement:
+            - Sid: ReadUsdaKey
+              Effect: Allow
+              Action: ssm:GetParameter
+              Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${UsdaKeyParameter}
+            # Global cross-Region inference needs all three parts:
+            # https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-region-inference.html
+            - Sid: InvokeGlobalProfile
+              Effect: Allow
+              Action: bedrock:InvokeModel
+              Resource: !Sub arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:inference-profile/global.${ModelName}
+              Condition:
+                StringEquals:
+                  aws:RequestedRegion: !Ref AWS::Region
+            - Sid: InvokeRegionalModelThroughProfile
+              Effect: Allow
+              Action: bedrock:InvokeModel
+              Resource: !Sub arn:aws:bedrock:${AWS::Region}::foundation-model/${ModelName}
+              Condition:
+                StringEquals:
+                  aws:RequestedRegion: !Ref AWS::Region
+                  bedrock:InferenceProfileArn: !Sub arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:inference-profile/global.${ModelName}
+            - Sid: InvokeGlobalModelThroughProfile
+              Effect: Allow
+              Action: bedrock:InvokeModel
+              Resource: !Sub arn:aws:bedrock:::foundation-model/${ModelName}
+              Condition:
+                StringEquals:
+                  aws:RequestedRegion: unspecified
+                  bedrock:InferenceProfileArn: !Sub arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:inference-profile/global.${ModelName}
+      Events:
+        Analyze:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref AnalyzeApi
+            Path: /analyze
+            Method: POST
+
+  AnalyzeLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${AnalyzeFunction}
+      RetentionInDays: 7
+
+Outputs:
+  AnalyzeUrl:
+    Description: POST meal descriptions here
+    Value: !Sub https://${AnalyzeApi}.execute-api.${AWS::Region}.amazonaws.com/analyze
