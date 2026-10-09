@@ -11,6 +11,10 @@ Parameters:
     Type: String
     Default: /words2macros/usda-api-key
     Description: SSM SecureString holding the USDA API key (created outside this template)
+  KillSwitchInvocationsPer5Min:
+    Type: Number
+    Default: 60
+    Description: Stop the analyze function if it runs more than this many times in 5 minutes
 
 Resources:
   AnalyzeApi:
@@ -22,8 +26,8 @@ Resources:
         AllowHeaders: [content-type]
       DefaultRouteSettings:
         # Public endpoint with no login: cap how fast Bedrock costs can grow.
-        ThrottlingRateLimit: 5
-        ThrottlingBurstLimit: 10
+        ThrottlingRateLimit: 1
+        ThrottlingBurstLimit: 2
 
   AnalyzeFunction:
     Type: AWS::Serverless::Function
@@ -85,7 +89,109 @@ Resources:
       LogGroupName: !Sub /aws/lambda/${AnalyzeFunction}
       RetentionInDays: 7
 
+  # --- Cost kill switch (fast): alarm on invocation spikes -> set concurrency to 0 ---
+
+  KillSwitchFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: .
+      Handler: words2macros.killswitch.lambda_handler
+      Runtime: python3.13
+      Architectures: [arm64]
+      MemorySize: 128
+      Timeout: 10
+      Environment:
+        Variables:
+          TARGET_FUNCTION: !Ref AnalyzeFunction
+      Policies:
+        - Statement:
+            - Sid: StopAnalyzeFunction
+              Effect: Allow
+              Action: lambda:PutFunctionConcurrency
+              Resource: !GetAtt AnalyzeFunction.Arn
+
+  KillSwitchLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${KillSwitchFunction}
+      RetentionInDays: 7
+
+  CostSpikeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub ${AWS::StackName}-cost-spike
+      AlarmDescription: Analyze function ran unusually often; the kill switch stops it.
+      Namespace: AWS/Lambda
+      MetricName: Invocations
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref AnalyzeFunction
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: !Ref KillSwitchInvocationsPer5Min
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !GetAtt KillSwitchFunction.Arn
+
+  KillSwitchAlarmPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref KillSwitchFunction
+      Action: lambda:InvokeFunction
+      Principal: lambda.alarms.cloudwatch.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      SourceArn: !GetAtt CostSpikeAlarm.Arn
+
+  # --- Pieces for the AWS Budgets action (slow insurance), configured in the console ---
+
+  DenyBedrockPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub ${AWS::StackName}-deny-bedrock
+      Description: Attached to the analyze function's role by a Budgets action to stop AI spend.
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Deny
+            Action: bedrock:*
+            Resource: "*"
+
+  BudgetsActionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: Lets AWS Budgets attach or detach only the deny-bedrock policy on the analyze role.
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: budgets.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
+      Policies:
+        - PolicyName: attach-deny-bedrock-only
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                Resource: !GetAtt AnalyzeFunctionRole.Arn
+                Condition:
+                  ArnEquals:
+                    iam:PolicyARN: !Ref DenyBedrockPolicy
+
 Outputs:
   AnalyzeUrl:
     Description: POST meal descriptions here
     Value: !Sub https://${AnalyzeApi}.execute-api.${AWS::Region}.amazonaws.com/analyze
+  ReenableCommand:
+    Description: Run this after the kill switch has stopped the analyze function
+    Value: !Sub aws lambda delete-function-concurrency --function-name ${AnalyzeFunction}

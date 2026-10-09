@@ -10,5 +10,5 @@ cached = true
 [default.deploy.parameters]
 resolve_s3 = true
 s3_prefix = "words2macros"
-capabilities = "CAPABILITY_IAM"
+capabilities = "CAPABILITY_IAM CAPABILITY_NAMED_IAM"
 confirm_changeset = true

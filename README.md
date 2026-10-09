@@ -145,15 +145,17 @@ Constraints are declared on the fields themselves:
 
 ```python
 class ParsedItem(StrictModel):
-    name: str = Field(min_length=1)               # not empty (or whitespace only)
+    name: str = Field(min_length=1)  # not empty (or whitespace only)
     preparation: str | None = None
-    grams: float = Field(gt=0)                    # must be positive
-    amount_source: Literal["stated", "estimated"] # only these two values
+    grams: float = Field(gt=0)  # must be positive
+    amount_source: Literal["stated", "estimated"]  # only these two values
     assumption: str | None = None
 
+
 class Nutrients(StrictModel):
-    calories_kcal: float = Field(ge=0)            # no negative nutrients
+    calories_kcal: float = Field(ge=0)  # no negative nutrients
     ...
+
 
 class ParseResult(StrictModel):
     items: list[ParsedItem] = Field(min_length=1, max_length=MAX_ITEMS_PER_MEAL)
