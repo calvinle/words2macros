@@ -88,3 +88,30 @@ def test_api_key_from_ssm_is_read_once(monkeypatch, fresh_key_cache):
     assert usda.get_api_key() == "ssm-key"
     assert usda.get_api_key() == "ssm-key"
     assert calls == [{"Name": "/words2macros/usda-api-key", "WithDecryption": True}]
+
+
+def test_api_key_sent_as_header_not_in_url(monkeypatch):
+    sent = []
+
+    class FakeResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def read(self):
+            return (FIXTURES / "usda_search_gravy.json").read_bytes()
+
+    def fake_urlopen(request, timeout):
+        sent.append(request)
+        return FakeResponse()
+
+    monkeypatch.setattr(usda.urllib.request, "urlopen", fake_urlopen)
+
+    matches = usda.search_foods("gravy", api_key="secret-key")
+
+    [request] = sent
+    assert request.get_header("X-api-key") == "secret-key"
+    assert "secret-key" not in request.full_url
+    assert len(matches) == 5

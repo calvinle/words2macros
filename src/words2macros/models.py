@@ -19,6 +19,10 @@ WarningCode = Literal[
     "OVER_2000G",  # implausibly large single item
 ]
 
+# Each food costs a USDA search and a Bedrock call, so cap foods per meal to bound
+# cost, response time and use of the shared USDA quota.
+MAX_ITEMS_PER_MEAL = 10
+
 
 class StrictModel(BaseModel):
     # Reject unknown fields and treat whitespace-only text as empty.
@@ -44,7 +48,7 @@ class ParsedItem(StrictModel):
 class ParseResult(StrictModel):
     """The full AI parse output for one paragraph."""
 
-    items: list[ParsedItem] = Field(min_length=1)
+    items: list[ParsedItem] = Field(min_length=1, max_length=MAX_ITEMS_PER_MEAL)
 
 
 class Nutrients(StrictModel):

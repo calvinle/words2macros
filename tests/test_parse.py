@@ -95,3 +95,33 @@ def test_bad_input_rejected_before_calling_model(text):
     with pytest.raises(ParseError):
         parse_meal(text, client)
     assert client.requests == []
+
+
+def test_too_many_foods_is_rejected_without_retry():
+    food = {
+        "name": "grape",
+        "preparation": None,
+        "grams": 5,
+        "amount_source": "stated",
+        "assumption": None,
+    }
+    client = FakeBedrock(json.dumps({"items": [food] * 11}))
+
+    with pytest.raises(ParseError, match="more than 10 foods") as error:
+        parse_meal("eleven grapes, one at a time", client)
+    assert error.value.code == "TOO_MANY_FOODS"
+    assert len(client.requests) == 1
+
+
+def test_ten_foods_is_allowed():
+    food = {
+        "name": "grape",
+        "preparation": None,
+        "grams": 5,
+        "amount_source": "stated",
+        "assumption": None,
+    }
+
+    result = parse_meal("ten grapes", FakeBedrock(json.dumps({"items": [food] * 10})))
+
+    assert len(result.items) == 10

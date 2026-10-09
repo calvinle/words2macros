@@ -60,18 +60,19 @@ def search_foods(
     query: str, page_size: int = DEFAULT_PAGE_SIZE, api_key: str | None = None
 ) -> list[FoodMatch]:
     """Top matching food records for a query, best first. Empty if nothing matched."""
-    api_key = api_key or get_api_key()
-    url = f"{SEARCH_URL}?{urllib.parse.urlencode({'api_key': api_key})}"
     body = json.dumps({"query": query, "dataType": DATA_TYPES, "pageSize": page_size})
+    # The key goes in a header, not the URL: URLs tend to end up in proxy and server logs.
     request = urllib.request.Request(
-        url, data=body.encode(), headers={"Content-Type": "application/json"}, method="POST"
+        SEARCH_URL,
+        data=body.encode(),
+        headers={"Content-Type": "application/json", "X-Api-Key": api_key or get_api_key()},
+        method="POST",
     )
     for attempt in range(ATTEMPTS):
         try:
             with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:
                 return parse_search_response(json.load(response))
         except urllib.error.HTTPError as e:
-            # Error messages never include the URL: it contains the API key.
             retryable = e.code == 429 or e.code >= 500
             if not retryable or attempt == ATTEMPTS - 1:
                 raise UsdaError(

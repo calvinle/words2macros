@@ -8,7 +8,7 @@ from typing import Any
 
 from words2macros.bedrock import ask_validated, make_client
 from words2macros.errors import UserFacingError
-from words2macros.models import ParseResult
+from words2macros.models import MAX_ITEMS_PER_MEAL, ParseResult
 
 MAX_INPUT_CHARS = 2000
 
@@ -66,7 +66,7 @@ OUTPUT_SCHEMA = {
 class ParseError(UserFacingError):
     """The meal description could not be turned into a valid parse.
 
-    Codes: INVALID_TEXT, NO_FOOD_FOUND, UNPARSEABLE.
+    Codes: INVALID_TEXT, NO_FOOD_FOUND, TOO_MANY_FOODS, UNPARSEABLE.
     """
 
 
@@ -103,5 +103,12 @@ def _validate(data: Any) -> ParseResult:
             "NO_FOOD_FOUND",
             "No foods were found in that description. Try listing what was eaten, "
             "for example: '2 eggs and a slice of toast'.",
+        )
+    if isinstance(data, dict) and len(data.get("items", [])) > MAX_ITEMS_PER_MEAL:
+        # Also not worth retrying: the text really lists too many foods.
+        raise ParseError(
+            "TOO_MANY_FOODS",
+            f"That description lists more than {MAX_ITEMS_PER_MEAL} foods. Split it into "
+            f"smaller meals of up to {MAX_ITEMS_PER_MEAL} foods each.",
         )
     return ParseResult.model_validate(data)
