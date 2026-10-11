@@ -1,0 +1,53 @@
+// Mirrors src/words2macros/models.py. Keep the two in sync.
+
+export const MAX_INPUT_CHARS = 2000; // parse.py
+export const MAX_ITEMS_PER_MEAL = 10; // models.py
+
+export type AmountSource = 'stated' | 'estimated';
+export type MatchSource = 'usda' | 'ai_estimate';
+export type WarningCode =
+  | 'AMOUNT_ESTIMATED' // the AI guessed a portion size
+  | 'CALORIE_DENSE_ESTIMATE' // guessed portion of a calorie-dense food
+  | 'NUTRIENTS_ESTIMATED' // no database match; nutrients are an AI estimate
+  | 'ENERGY_MISMATCH' // calories far from 4P + 4C + 9F, likely a bad match
+  | 'OVER_2000G'; // implausibly large single item
+
+export interface Nutrients {
+  calories_kcal: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+}
+
+export interface FoodMatch {
+  source: MatchSource;
+  fdc_id: number | null;
+  description: string;
+  per_100g: Nutrients;
+}
+
+export interface ItemResult {
+  name: string;
+  preparation: string | null;
+  grams: number;
+  amount_source: AmountSource;
+  assumption: string | null;
+  match: FoodMatch;
+  nutrients: Nutrients;
+}
+
+export interface MealWarning {
+  code: WarningCode;
+  message: string;
+  item_index: number | null; // null for meal-level warnings
+}
+
+/** The POST /analyze success body. */
+export interface AnalyzeResponse {
+  items: ItemResult[];
+  totals: Nutrients;
+  warnings: MealWarning[];
+  text: string; // the original input, echoed back
+  request_id: string;
+  analyzed_at: string; // ISO 8601, UTC
+}
