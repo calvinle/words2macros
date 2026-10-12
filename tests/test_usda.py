@@ -25,6 +25,22 @@ def test_parse_mashed_potatoes():
     assert first.per_100g == Nutrients(calories_kcal=114, protein_g=2.15, carbs_g=17.6, fat_g=4.07)
 
 
+def test_parse_reads_alcohol():
+    [tequila, sunrise] = parse_search_response(load("usda_search_tequila.json"))
+
+    assert tequila.per_100g == Nutrients(
+        calories_kcal=231, protein_g=0, carbs_g=0, fat_g=0, alcohol_g=33.4
+    )
+    assert sunrise.per_100g.alcohol_g == 8.1
+
+
+def test_missing_alcohol_means_zero():
+    # The potato records have no alcohol entry at all.
+    matches = parse_search_response(load("usda_search_mashed_potatoes.json"))
+
+    assert all(m.per_100g.alcohol_g == 0 for m in matches)
+
+
 def test_parse_keeps_search_order():
     matches = parse_search_response(load("usda_search_gravy.json"))
 

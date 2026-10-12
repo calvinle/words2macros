@@ -28,8 +28,8 @@ amounts. Nutrient values come from the
 3. **Calculate (code):** per-100 g values × grams, summed per item and per meal.
 4. **Validate (code):** every payload is checked by a Pydantic model (see
    [Validation with Pydantic](#validation-with-pydantic)), and sanity checks add warnings:
-   estimated amounts, calorie-dense estimates, calories that don't add up from the macros, and
-   items over 2,000 g.
+   estimated amounts, calorie-dense estimates, calories that don't add up from the macros and
+   alcohol (4/4/9/7 kcal per gram), and items over 2,000 g.
 
 ## Architecture
 
@@ -49,7 +49,7 @@ own logs.
 `POST /analyze` with `{"text": "2 scrambled eggs and a slice of toast"}`.
 
 **200 OK** returns the meal: `items` (each with grams, `amount_source`, `assumption`, the matched
-food record and its nutrients), `totals`, `warnings`, plus the original `text`, a `request_id`
+food record and its nutrients, including `alcohol_g`), `totals`, `warnings`, plus the original `text`, a `request_id`
 and `analyzed_at` for tracing.
 
 Errors share one shape, `{"error": {"code", "message", "request_id"}}`:

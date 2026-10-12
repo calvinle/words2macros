@@ -56,6 +56,8 @@ class Nutrients(StrictModel):
     protein_g: float = Field(ge=0)
     carbs_g: float = Field(ge=0)
     fat_g: float = Field(ge=0)
+    # 7 kcal/g. Needed to explain the calories of drinks; most foods have none.
+    alcohol_g: float = Field(default=0, ge=0)
 
 
 class FoodMatch(StrictModel):

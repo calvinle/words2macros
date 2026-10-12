@@ -3,9 +3,9 @@ import { TestBed } from '@angular/core/testing';
 import { MEAL } from '../meal.fixtures';
 import { MealTotalsComponent } from './meal-totals';
 
-async function render(estimated: boolean): Promise<HTMLElement> {
+async function render(estimated: boolean, totals = MEAL.totals): Promise<HTMLElement> {
   const fixture = TestBed.createComponent(MealTotalsComponent);
-  fixture.componentRef.setInput('totals', MEAL.totals);
+  fixture.componentRef.setInput('totals', totals);
   fixture.componentRef.setInput('estimated', estimated);
   await fixture.whenStable();
   return fixture.nativeElement;
@@ -22,6 +22,12 @@ describe('MealTotalsComponent', () => {
     const el = await render(false);
     expect(el.querySelector('.calories')?.textContent).not.toContain('~');
     expect(el.textContent).not.toContain('Includes estimated amounts');
+  });
+
+  it('shows alcohol only when there is some', async () => {
+    expect((await render(false)).textContent).not.toContain('Alcohol');
+    const withDrink = await render(false, { ...MEAL.totals, alcohol_g: 15 });
+    expect(withDrink.querySelector('.macros')?.textContent).toContain('Alcohol15.0 g');
   });
 
   it('describes the macro split for screen readers', async () => {

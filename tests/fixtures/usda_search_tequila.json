@@ -1,0 +1,79 @@
+{
+  "totalHits": 2,
+  "foods": [
+    {
+      "fdcId": 2710705,
+      "description": "Tequila",
+      "dataType": "Survey (FNDDS)",
+      "foodNutrients": [
+        {
+          "value": 0,
+          "nutrientName": "Protein",
+          "nutrientId": 1003,
+          "unitName": "G"
+        },
+        {
+          "value": 0,
+          "nutrientName": "Total lipid (fat)",
+          "nutrientId": 1004,
+          "unitName": "G"
+        },
+        {
+          "value": 0,
+          "nutrientName": "Carbohydrate, by difference",
+          "nutrientId": 1005,
+          "unitName": "G"
+        },
+        {
+          "value": 231,
+          "nutrientName": "Energy",
+          "nutrientId": 1008,
+          "unitName": "KCAL"
+        },
+        {
+          "value": 33.4,
+          "nutrientName": "Alcohol, ethyl",
+          "nutrientId": 1018,
+          "unitName": "G"
+        }
+      ]
+    },
+    {
+      "fdcId": 2710678,
+      "description": "Tequila Sunrise",
+      "dataType": "Survey (FNDDS)",
+      "foodNutrients": [
+        {
+          "value": 0.52,
+          "nutrientName": "Protein",
+          "nutrientId": 1003,
+          "unitName": "G"
+        },
+        {
+          "value": 0.23,
+          "nutrientName": "Total lipid (fat)",
+          "nutrientId": 1004,
+          "unitName": "G"
+        },
+        {
+          "value": 12.62,
+          "nutrientName": "Carbohydrate, by difference",
+          "nutrientId": 1005,
+          "unitName": "G"
+        },
+        {
+          "value": 111,
+          "nutrientName": "Energy",
+          "nutrientId": 1008,
+          "unitName": "KCAL"
+        },
+        {
+          "value": 8.1,
+          "nutrientName": "Alcohol, ethyl",
+          "nutrientId": 1018,
+          "unitName": "G"
+        }
+      ]
+    }
+  ]
+}

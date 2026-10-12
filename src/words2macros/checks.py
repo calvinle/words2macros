@@ -79,7 +79,7 @@ def check_nutrients_estimated(item: ParsedItem, match: FoodMatch, index: int) ->
 
 def check_energy(match: FoodMatch, index: int) -> list[MealWarning]:
     n = match.per_100g
-    from_macros = 4 * n.protein_g + 4 * n.carbs_g + 9 * n.fat_g
+    from_macros = 4 * n.protein_g + 4 * n.carbs_g + 9 * n.fat_g + 7 * n.alcohol_g
     gap = abs(n.calories_kcal - from_macros)
     larger = max(n.calories_kcal, from_macros)
     if gap <= ENERGY_GAP_KCAL_PER_100G or gap <= ENERGY_GAP_RATIO * larger:
@@ -88,8 +88,8 @@ def check_energy(match: FoodMatch, index: int) -> list[MealWarning]:
         MealWarning(
             code="ENERGY_MISMATCH",
             message=(
-                f"The calories for '{match.description}' don't add up from its protein, carbs "
-                "and fat, so this may be a poor database match. Check the matched food."
+                f"The calories for '{match.description}' don't add up from its protein, carbs, "
+                "fat and alcohol, so this may be a poor database match. Check the matched food."
             ),
             item_index=index,
         )

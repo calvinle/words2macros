@@ -13,9 +13,24 @@
     </p>
 
     <dl class="macros">
-      <div><dt><span class="dot protein"></span>Protein</dt><dd>{{ totals().protein_g | number: '1.1-1' }} g</dd></div>
-      <div><dt><span class="dot carbs"></span>Carbs</dt><dd>{{ totals().carbs_g | number: '1.1-1' }} g</dd></div>
-      <div><dt><span class="dot fat"></span>Fat</dt><dd>{{ totals().fat_g | number: '1.1-1' }} g</dd></div>
+      <div>
+        <dt><span class="dot protein"></span>Protein</dt>
+        <dd>{{ totals().protein_g | number: '1.1-1' }} g</dd>
+      </div>
+      <div>
+        <dt><span class="dot carbs"></span>Carbs</dt>
+        <dd>{{ totals().carbs_g | number: '1.1-1' }} g</dd>
+      </div>
+      <div>
+        <dt><span class="dot fat"></span>Fat</dt>
+        <dd>{{ totals().fat_g | number: '1.1-1' }} g</dd>
+      </div>
+      @if (totals().alcohol_g > 0) {
+        <div>
+          <dt>Alcohol</dt>
+          <dd>{{ totals().alcohol_g | number: '1.1-1' }} g</dd>
+        </div>
+      }
     </dl>
 
     @if (shares(); as s) {

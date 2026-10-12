@@ -4,7 +4,7 @@ from collections.abc import Iterable
 
 from words2macros.models import Nutrients
 
-FIELDS = ("calories_kcal", "protein_g", "carbs_g", "fat_g")
+FIELDS = ("calories_kcal", "protein_g", "carbs_g", "fat_g", "alcohol_g")
 
 
 def scale(per_100g: Nutrients, grams: float) -> Nutrients:

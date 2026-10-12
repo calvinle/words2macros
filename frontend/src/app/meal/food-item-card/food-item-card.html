@@ -11,15 +11,20 @@
         <span class="badge" [class.estimated]="estimated()">
           {{ estimated() ? 'Estimated' : 'Stated' }}
         </span>
-        <span class="grams">{{ estimated() ? '~' : '' }}{{ item().grams | number: '1.0-0' }} g</span>
+        <span class="grams"
+          >{{ estimated() ? '~' : '' }}{{ item().grams | number: '1.0-0' }} g</span
+        >
       </div>
     </div>
 
     <p class="macros">
-      {{ item().nutrients.calories_kcal | number: '1.0-0' }} kcal ·
-      P {{ item().nutrients.protein_g | number: '1.1-1' }} g ·
-      C {{ item().nutrients.carbs_g | number: '1.1-1' }} g ·
-      F {{ item().nutrients.fat_g | number: '1.1-1' }} g
+      {{ item().nutrients.calories_kcal | number: '1.0-0' }} kcal · P
+      {{ item().nutrients.protein_g | number: '1.1-1' }} g · C
+      {{ item().nutrients.carbs_g | number: '1.1-1' }} g · F
+      {{ item().nutrients.fat_g | number: '1.1-1' }} g
+      @if (item().nutrients.alcohol_g > 0) {
+        · Alcohol {{ item().nutrients.alcohol_g | number: '1.1-1' }} g
+      }
     </p>
 
     @for (w of warnings(); track $index) {

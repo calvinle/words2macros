@@ -40,7 +40,8 @@ No database record was found for a food someone ate. Estimate typical nutrient v
 100 g of the food as eaten, in its stated preparation.
 
 - description: a short name for what you estimated, such as "Gravy, homemade".
-- Values are per 100 g: calories in kcal, protein, carbs and fat in grams.
+- Values are per 100 g: calories in kcal, protein, carbs, fat and alcohol in grams.
+- alcohol_g is 0 unless the food is an alcoholic drink or contains alcohol.
 """
 
 ESTIMATE_SCHEMA = {
@@ -51,8 +52,9 @@ ESTIMATE_SCHEMA = {
         "protein_g": {"type": "number"},
         "carbs_g": {"type": "number"},
         "fat_g": {"type": "number"},
+        "alcohol_g": {"type": "number"},
     },
-    "required": ["description", "calories_kcal", "protein_g", "carbs_g", "fat_g"],
+    "required": ["description", "calories_kcal", "protein_g", "carbs_g", "fat_g", "alcohol_g"],
     "additionalProperties": False,
 }
 

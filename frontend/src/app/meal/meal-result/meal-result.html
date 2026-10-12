@@ -3,8 +3,8 @@
 @if (estimated() > 0) {
   <app-warning-line class="summary">
     {{ estimated() }} of {{ result().items.length }}
-    {{ result().items.length === 1 ? 'amount was' : 'amounts were' }} estimated. Check the
-    details on each food below.
+    {{ result().items.length === 1 ? 'amount was' : 'amounts were' }} estimated. Check the details
+    on each food below.
   </app-warning-line>
 }
 @for (w of mealWarnings(); track $index) {

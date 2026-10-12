@@ -9,7 +9,7 @@ export type WarningCode =
   | 'AMOUNT_ESTIMATED' // the AI guessed a portion size
   | 'CALORIE_DENSE_ESTIMATE' // guessed portion of a calorie-dense food
   | 'NUTRIENTS_ESTIMATED' // no database match; nutrients are an AI estimate
-  | 'ENERGY_MISMATCH' // calories far from 4P + 4C + 9F, likely a bad match
+  | 'ENERGY_MISMATCH' // calories far from 4P + 4C + 9F + 7A, likely a bad match
   | 'OVER_2000G'; // implausibly large single item
 
 export interface Nutrients {
@@ -17,6 +17,7 @@ export interface Nutrients {
   protein_g: number;
   carbs_g: number;
   fat_g: number;
+  alcohol_g: number; // 0 for most foods
 }
 
 export interface FoodMatch {

@@ -15,6 +15,12 @@ def test_scale_by_grams():
     assert n.fat_g == pytest.approx(7.98)
 
 
+def test_scale_includes_alcohol():
+    tequila = Nutrients(calories_kcal=231, protein_g=0, carbs_g=0, fat_g=0, alcohol_g=33.4)
+
+    assert scale(tequila, 45).alcohol_g == pytest.approx(15.03)
+
+
 def test_scale_100g_is_unchanged():
     assert scale(POTATO_PER_100G, 100) == POTATO_PER_100G
 

@@ -10,7 +10,9 @@
     (keydown.control.enter)="submit()"
     (keydown.meta.enter)="submit()"
   ></textarea>
-  <mat-hint>Amounts (grams, cups, "1 medium") improve accuracy. Up to {{ maxItems }} foods.</mat-hint>
+  <mat-hint
+    >Amounts (grams, cups, "1 medium") improve accuracy. Up to {{ maxItems }} foods.</mat-hint
+  >
   <mat-hint align="end">{{ length() }} / {{ maxChars }}</mat-hint>
   <mat-error>{{ length() }} / {{ maxChars }} characters. Shorten the description.</mat-error>
 </mat-form-field>

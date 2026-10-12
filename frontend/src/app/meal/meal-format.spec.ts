@@ -1,11 +1,8 @@
-import {
-  estimatedCount,
-  macroShares,
-  mealLevelWarnings,
-  warningsForItem,
-} from './meal-format';
+import { estimatedCount, macroShares, mealLevelWarnings, warningsForItem } from './meal-format';
 import { MEAL, STATED_ITEM } from './meal.fixtures';
 import { MealWarning } from './meal.models';
+
+const NONE = { calories_kcal: 0, protein_g: 0, carbs_g: 0, fat_g: 0, alcohol_g: 0 };
 
 describe('macroShares', () => {
   it('splits calories 4/4/9 and adds up to 100', () => {
@@ -14,12 +11,12 @@ describe('macroShares', () => {
   });
 
   it('adds up to 100 when every share rounds down', () => {
-    const s = macroShares({ calories_kcal: 0, protein_g: 1, carbs_g: 1, fat_g: 4 / 9 })!;
+    const s = macroShares({ ...NONE, protein_g: 1, carbs_g: 1, fat_g: 4 / 9 })!;
     expect(s.protein + s.carbs + s.fat).toBe(100);
   });
 
   it('returns null when there are no macros', () => {
-    expect(macroShares({ calories_kcal: 0, protein_g: 0, carbs_g: 0, fat_g: 0 })).toBeNull();
+    expect(macroShares(NONE)).toBeNull();
   });
 });
 

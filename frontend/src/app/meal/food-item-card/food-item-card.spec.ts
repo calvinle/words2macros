@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AI_ESTIMATED_ITEM, MEAL, STATED_ITEM } from '../meal.fixtures';
+import { AI_ESTIMATED_ITEM, MEAL, STATED_ITEM, TEQUILA_ITEM } from '../meal.fixtures';
 import { ItemResult, MealWarning } from '../meal.models';
 import { FoodItemCardComponent } from './food-item-card';
 
@@ -23,6 +23,15 @@ describe('FoodItemCardComponent', () => {
     const el = await render(STATED_ITEM);
     expect(el.querySelector('.badge')?.textContent).toContain('Stated');
     expect(el.querySelector('.grams')?.textContent?.trim()).toBe('150 g');
+  });
+
+  it('shows alcohol only when there is some', async () => {
+    expect((await render(TEQUILA_ITEM)).querySelector('.macros')?.textContent).toContain(
+      'Alcohol 15.0 g',
+    );
+    expect((await render(STATED_ITEM)).querySelector('.macros')?.textContent).not.toContain(
+      'Alcohol',
+    );
   });
 
   it('shows its warnings, styled by severity', async () => {

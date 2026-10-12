@@ -20,6 +20,7 @@ ESTIMATE_REPLY = json.dumps(
         "protein_g": 1.5,
         "carbs_g": 5,
         "fat_g": 3.5,
+        "alcohol_g": 0,
     }
 )
 

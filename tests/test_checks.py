@@ -96,6 +96,18 @@ def test_energy_mismatch_warns():
     assert "'Potatoes, mashed'" in warning.message
 
 
+def test_alcohol_counts_toward_energy():
+    # Tequila: no protein, carbs or fat; 7 * 33.4 = 234 kcal from alcohol vs 231 listed.
+    tequila = match(calories_kcal=231, protein_g=0, carbs_g=0, fat_g=0, alcohol_g=33.4)
+    assert check_energy(tequila, 0) == []
+
+
+def test_alcohol_does_not_hide_a_real_mismatch():
+    # 7 * 8.1 = 57 kcal from alcohol, plus 0 from macros, vs 300 listed.
+    drink = match(calories_kcal=300, protein_g=0, carbs_g=0, fat_g=0, alcohol_g=8.1)
+    assert [w.code for w in check_energy(drink, 0)] == ["ENERGY_MISMATCH"]
+
+
 def test_consistent_energy_does_not_warn():
     assert check_energy(match(), 0) == []
 
