@@ -1,4 +1,10 @@
-import { estimatedCount, macroShares, mealLevelWarnings, warningsForItem } from './meal-format';
+import {
+  energyFromMacros,
+  estimatedCount,
+  macroShares,
+  mealLevelWarnings,
+  warningsForItem,
+} from './meal-format';
 import { MEAL, STATED_ITEM } from './meal.fixtures';
 import { MealWarning } from './meal.models';
 
@@ -37,5 +43,13 @@ describe('estimatedCount', () => {
   it('counts estimated amounts only', () => {
     expect(estimatedCount(MEAL.items)).toBe(2);
     expect(estimatedCount([STATED_ITEM])).toBe(0);
+  });
+});
+
+describe('energyFromMacros', () => {
+  it('uses 4/4/9/7 kcal per gram', () => {
+    expect(energyFromMacros({ ...NONE, protein_g: 1, carbs_g: 1, fat_g: 1, alcohol_g: 1 })).toBe(
+      24,
+    );
   });
 });

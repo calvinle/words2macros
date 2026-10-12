@@ -29,6 +29,8 @@ export class MealPageStore {
     // The previous result stays visible (dimmed) until this request finishes.
     this.api.analyze(text).subscribe({
       next: (r) => {
+        // The validated response, for anyone curious in the browser's developer tools.
+        console.info('words2macros: validated /analyze response', r);
         this.result.set(r);
         this.busy.set(false);
       },

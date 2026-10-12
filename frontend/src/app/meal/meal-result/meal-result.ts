@@ -1,5 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 
+import { CalculationDetailsComponent } from '../calculation-details/calculation-details';
 import { FoodItemCardComponent } from '../food-item-card/food-item-card';
 import {
   WARNING_SEVERITY,
@@ -14,7 +15,12 @@ import { WarningLineComponent } from '../warning-line/warning-line';
 /** Arranges one analyzed meal: totals, a summary of estimates, then each food. */
 @Component({
   selector: 'app-meal-result',
-  imports: [FoodItemCardComponent, MealTotalsComponent, WarningLineComponent],
+  imports: [
+    CalculationDetailsComponent,
+    FoodItemCardComponent,
+    MealTotalsComponent,
+    WarningLineComponent,
+  ],
   templateUrl: './meal-result.html',
   styleUrl: './meal-result.scss',
 })

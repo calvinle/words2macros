@@ -1,0 +1,115 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>How this was calculated</mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <!-- Built only when the panel is first opened. -->
+  <ng-template matExpansionPanelContent>
+    <ol class="steps">
+      <li>
+        <h3>Read the description <span class="who">AI</span></h3>
+        <p class="note">
+          The AI turned the text into foods and gram amounts. It never produces nutrient numbers.
+        </p>
+        @for (item of result().items; track $index) {
+          <div class="food">
+            <strong>{{ item.name }}</strong>
+            @if (item.preparation) {
+              · {{ item.preparation }}
+            }
+            · {{ item.grams | number: '1.0-1' }} g ·
+            {{ item.amount_source === 'estimated' ? 'Estimated' : 'Stated' }}
+            @if (item.assumption) {
+              <div class="assumption">"{{ item.assumption }}"</div>
+            }
+          </div>
+        }
+      </li>
+
+      <li>
+        <h3>Find each food in the USDA database <span class="who">AI picks by ID</span></h3>
+        <p class="note">
+          The AI chose one record from the top USDA search results. The nutrient values come from
+          that record.
+        </p>
+        @for (item of result().items; track $index) {
+          <div class="food">
+            <strong>{{ item.name }}</strong> →
+            @if (item.match.source === 'usda') {
+              {{ item.match.description }} (FDC {{ item.match.fdc_id }})
+            } @else {
+              AI estimate (no USDA match): {{ item.match.description }}
+            }
+            <div class="per100">
+              per 100 g: {{ item.match.per_100g.calories_kcal | number: '1.0-1' }} kcal · P
+              {{ item.match.per_100g.protein_g | number: '1.0-2' }} · C
+              {{ item.match.per_100g.carbs_g | number: '1.0-2' }} · F
+              {{ item.match.per_100g.fat_g | number: '1.0-2' }}
+              @if (item.match.per_100g.alcohol_g > 0) {
+                · Alcohol {{ item.match.per_100g.alcohol_g | number: '1.0-2' }}
+              }
+            </div>
+          </div>
+        }
+      </li>
+
+      <li>
+        <h3>Calculate <span class="who">code</span></h3>
+        <p class="note">Grams × value per 100 g ÷ 100, for calories and each macro.</p>
+        @for (item of result().items; track $index) {
+          <div class="food math">
+            <strong>{{ item.name }}</strong
+            >: {{ item.grams | number: '1.0-1' }} g ×
+            {{ item.match.per_100g.calories_kcal | number: '1.0-1' }} kcal / 100 g =
+            {{ item.nutrients.calories_kcal | number: '1.1-1' }} kcal
+          </div>
+        }
+        <div class="food total">
+          Meal total: sum of {{ result().items.length }}
+          {{ result().items.length === 1 ? 'food' : 'foods' }} =
+          {{ result().totals.calories_kcal | number: '1.1-1' }} kcal
+        </div>
+      </li>
+
+      <li>
+        <h3>Check <span class="who">code</span></h3>
+        <div class="check passed">
+          <mat-icon aria-hidden="true">check_circle</mat-icon>
+          Response matched the expected structure (validated with Pydantic)
+        </div>
+        @for (item of result().items; track $index; let i = $index) {
+          <div class="food">
+            <strong>{{ item.name }}</strong>
+            @for (check of checks()[i]; track check.code) {
+              <div class="check" [class]="check.status">
+                <mat-icon aria-hidden="true">{{ check.icon }}</mat-icon>
+                <span>
+                  {{ check.label }}
+                  @if (check.code === 'ENERGY_MISMATCH') {
+                    <span class="detail">
+                      (per 100 g: 4×{{ item.match.per_100g.protein_g | number: '1.0-2' }} + 4×{{
+                        item.match.per_100g.carbs_g | number: '1.0-2'
+                      }}
+                      + 9×{{ item.match.per_100g.fat_g | number: '1.0-2' }}
+                      @if (item.match.per_100g.alcohol_g > 0) {
+                        + 7×{{ item.match.per_100g.alcohol_g | number: '1.0-2' }}
+                      }
+                      = {{ energyFromMacros(item.match.per_100g) | number: '1.0-0' }} kcal vs
+                      {{ item.match.per_100g.calories_kcal | number: '1.0-0' }} listed)
+                    </span>
+                  }
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </li>
+    </ol>
+
+    <p class="footer">
+      Reference: {{ result().request_id }} · Analyzed
+      {{ result().analyzed_at | date: 'yyyy-MM-dd HH:mm' }}<br />
+      The full validated response is logged to the browser console (developer tools).
+    </p>
+  </ng-template>
+</mat-expansion-panel>

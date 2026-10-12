@@ -52,3 +52,29 @@ export function mealLevelWarnings(warnings: MealWarning[]): MealWarning[] {
 export function estimatedCount(items: ItemResult[]): number {
   return items.filter((i) => i.amount_source === 'estimated').length;
 }
+
+/** Calories implied by the macros: 4 kcal/g protein and carbs, 9 fat, 7 alcohol. */
+export function energyFromMacros(n: Nutrients): number {
+  return 4 * n.protein_g + 4 * n.carbs_g + 9 * n.fat_g + 7 * n.alcohol_g;
+}
+
+/** The per-food checks the backend runs, with the warning code each one raises. */
+export const ITEM_CHECKS: { code: WarningCode; passed: string; flagged: string }[] = [
+  {
+    code: 'ENERGY_MISMATCH',
+    passed: 'Calories add up from the macros',
+    flagged: "Calories don't add up from the macros",
+  },
+  { code: 'OVER_2000G', passed: 'Weight under 2,000 g', flagged: 'Weight over 2,000 g' },
+  { code: 'AMOUNT_ESTIMATED', passed: 'Amount stated', flagged: 'Amount estimated' },
+  {
+    code: 'CALORIE_DENSE_ESTIMATE',
+    passed: 'No estimated portion of a calorie-dense food',
+    flagged: 'Estimated portion of a calorie-dense food',
+  },
+  {
+    code: 'NUTRIENTS_ESTIMATED',
+    passed: 'Nutrients from the USDA database',
+    flagged: 'Nutrients are an AI estimate',
+  },
+];

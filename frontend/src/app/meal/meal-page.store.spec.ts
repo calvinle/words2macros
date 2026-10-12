@@ -25,6 +25,14 @@ describe('MealPageStore', () => {
     response.complete();
   }
 
+  it('logs the validated response for the developer tools', () => {
+    const info = vi.spyOn(console, 'info').mockImplementation(() => {});
+    store.submit(MEAL.text);
+    succeed();
+    expect(info).toHaveBeenCalledWith(expect.stringContaining('validated'), MEAL);
+    info.mockRestore();
+  });
+
   it('is busy only while a request runs', () => {
     store.submit(MEAL.text);
     expect(store.busy()).toBe(true);

@@ -24,3 +24,5 @@
 @for (item of result().items; track $index) {
   <app-food-item-card [item]="item" [warnings]="itemWarnings()[$index]" />
 }
+
+<app-calculation-details [result]="result()" />
