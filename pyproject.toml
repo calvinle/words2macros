@@ -10,7 +10,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "boto3>=1.35",
+    "boto3[crt]>=1.35", # crt: reads `aws login` credentials
     "pytest>=8.3",
     "ruff>=0.8",
 ]
