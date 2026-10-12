@@ -14,6 +14,9 @@ SAMPLES = [
     "2 scrambled eggs, a slice of toast with butter, and black coffee.",
     "A handful of almonds and an apple.",
     "Big bowl of spaghetti with meat sauce and some parmesan on top.",
+    "Oatmeal made with 1/2 cup dry oats and water.",
+    "100 g dry spaghetti, boiled.",
+    "1 lb raw ground beef, 1 diced onion, 2 tbsp olive oil, 1 can crushed tomatoes.",
     "hello there",
 ]
 

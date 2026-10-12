@@ -21,8 +21,22 @@ Rules:
 "gravy". Do not include amounts or preparation in the name.
 - Keep the person's wording for the food. Do not add a type, flavor or variety they did not \
 say: "gravy" stays "gravy", not "beef gravy"; "cheese" stays "cheese", not "cheddar cheese".
-- preparation: how it was prepared, such as "mashed", "grilled" or "raw". Use null if unknown.
-- grams: the weight of the food as eaten. For cooked food, use the cooked weight.
+- preparation: how it was prepared, such as "mashed", "grilled", "dry" or "raw". Use null if \
+unknown.
+- grams and preparation must describe the same state of the food, because the preparation decides \
+which database record is used:
+  - If the amount is for the food before cooking ("1/2 cup dry oats", "100 g dry spaghetti", \
+"1 lb raw ground beef", recipe ingredient lists), keep that state: preparation "dry" or "raw" \
+and the uncooked grams. Never convert an uncooked amount to a cooked weight.
+  - If the amount is for the finished food ("1 cup cooked rice", "a bowl of mashed potatoes"), \
+use the cooked preparation and the cooked weight.
+  - If a dish is described by its ingredient ("mashed potatoes from a medium russet potato"), \
+the amount is for the ingredient: use the ingredient raw ("russet potato", "raw") with its raw \
+weight. Count only foods the person mentioned. In assumption, name common additions they did \
+not mention as not counted, for example "1 medium russet potato, raw weight; butter and milk \
+not mentioned, not counted".
+- Leave out plain water, and black coffee or tea, when they are only used for cooking or have \
+no calories.
 - amount_source:
   - "stated" when the person gave a weight (g, oz, lb) or a volume (cups, tbsp, tsp, ml). \
 Convert to grams and put the conversion in assumption, for example "1 cup cooked rice = about \
