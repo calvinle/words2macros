@@ -1,0 +1,43 @@
+:host {
+  display: block;
+}
+
+// Material buttons are one fixed-height line; on very narrow screens let the
+// label wrap and the button grow instead of the text spilling out.
+button {
+  max-width: 100%;
+  height: auto;
+  min-height: 40px; // Material's normal button height
+  white-space: normal;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.description {
+  width: 100%;
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+
+  button {
+    // Smaller than the main button, so they read as suggestions.
+    min-height: 32px;
+    border-radius: 16px;
+  }
+}
+
+.examples-label {
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}

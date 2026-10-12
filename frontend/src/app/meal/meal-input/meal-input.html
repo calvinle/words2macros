@@ -1,0 +1,31 @@
+<mat-form-field appearance="outline" subscriptSizing="dynamic" class="description">
+  <mat-label>What did you eat?</mat-label>
+  <textarea
+    matInput
+    cdkTextareaAutosize
+    cdkAutosizeMinRows="4"
+    [formControl]="text"
+    [errorStateMatcher]="tooLongMatcher"
+    placeholder="e.g. 2 scrambled eggs with 1 tbsp butter and a slice of whole wheat toast"
+    (keydown.control.enter)="submit()"
+    (keydown.meta.enter)="submit()"
+  ></textarea>
+  <mat-hint>Amounts (grams, cups, "1 medium") improve accuracy. Up to {{ maxItems }} foods.</mat-hint>
+  <mat-hint align="end">{{ length() }} / {{ maxChars }}</mat-hint>
+  <mat-error>{{ length() }} / {{ maxChars }} characters. Shorten the description.</mat-error>
+</mat-form-field>
+
+<div class="examples">
+  <span class="examples-label">Try one:</span>
+  @for (example of examples; track example.label) {
+    <button matButton="outlined" type="button" (click)="useExample(example.text)">
+      {{ example.label }}
+    </button>
+  }
+</div>
+
+<div class="actions">
+  <button matButton="filled" type="button" [disabled]="busy() || text.invalid" (click)="submit()">
+    Calculate macros
+  </button>
+</div>
