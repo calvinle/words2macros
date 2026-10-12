@@ -1,6 +1,6 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { Component, computed, input, output } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, ElementRef, computed, input, output, viewChild } from '@angular/core';
+import { outputFromObservable, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ErrorStateMatcher } from '@angular/material/core';
@@ -60,8 +60,12 @@ export class MealInputComponent {
     ],
   });
 
+  /** Every edit, so the page can tell when a shown result no longer matches the text. */
+  readonly textChange = outputFromObservable(this.text.valueChanges);
+
   private readonly value = toSignal(this.text.valueChanges, { initialValue: '' });
   readonly length = computed(() => this.value().length);
+  private readonly textarea = viewChild.required<ElementRef<HTMLTextAreaElement>>('textarea');
 
   submit(): void {
     if (this.busy() || this.text.invalid) return;
@@ -70,5 +74,9 @@ export class MealInputComponent {
 
   useExample(text: string): void {
     this.text.setValue(text);
+  }
+
+  focus(): void {
+    this.textarea().nativeElement.focus();
   }
 }

@@ -4,14 +4,27 @@ import { MEAL, STATED_ITEM } from '../meal.fixtures';
 import { AnalyzeResponse } from '../meal.models';
 import { MealResultComponent } from './meal-result';
 
-async function render(result: AnalyzeResponse): Promise<HTMLElement> {
+async function render(result: AnalyzeResponse, stale = false): Promise<HTMLElement> {
   const fixture = TestBed.createComponent(MealResultComponent);
   fixture.componentRef.setInput('result', result);
+  fixture.componentRef.setInput('stale', stale);
   await fixture.whenStable();
   return fixture.nativeElement;
 }
 
 describe('MealResultComponent', () => {
+  it('shows which text the result is for', async () => {
+    const el = await render(MEAL);
+    expect(el.querySelector('.results-for')?.textContent).toContain(MEAL.text);
+  });
+
+  it('says when the description has changed since the result', async () => {
+    expect((await render(MEAL)).querySelector('.stale')).toBeNull();
+    expect((await render(MEAL, true)).querySelector('.stale')?.textContent).toContain(
+      'has changed since this result',
+    );
+  });
+
   it('summarizes how many amounts were estimated', async () => {
     const el = await render(MEAL);
     expect(el.querySelector('.summary')?.textContent).toContain('2 of 2 amounts were estimated');

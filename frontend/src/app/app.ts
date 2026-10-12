@@ -1,36 +1,55 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Injector,
+  afterNextRender,
+  effect,
+  inject,
+  viewChild,
+} from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-import { ApiError, MealApiService } from './meal/meal-api.service';
+import { ErrorPanelComponent } from './meal/error-panel/error-panel';
+import { LoadingStatusComponent } from './meal/loading-status/loading-status';
 import { MealInputComponent } from './meal/meal-input/meal-input';
+import { MealPageStore } from './meal/meal-page.store';
 import { MealResultComponent } from './meal/meal-result/meal-result';
-import { AnalyzeResponse } from './meal/meal.models';
 
 @Component({
   selector: 'app-root',
-  imports: [MatToolbarModule, MealInputComponent, MealResultComponent],
+  imports: [
+    ErrorPanelComponent,
+    LoadingStatusComponent,
+    MatToolbarModule,
+    MealInputComponent,
+    MealResultComponent,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
-  private readonly api = inject(MealApiService);
+  protected readonly store = inject(MealPageStore);
+  private readonly injector = inject(Injector);
+  private readonly mealInput = viewChild.required(MealInputComponent);
+  private readonly results = viewChild<ElementRef<HTMLElement>>('results');
 
-  protected readonly busy = signal(false);
-  protected readonly result = signal<AnalyzeResponse | null>(null);
-  protected readonly error = signal<ApiError | null>(null);
-
-  protected onSubmit(text: string): void {
-    this.busy.set(true);
-    this.error.set(null);
-    this.api.analyze(text).subscribe({
-      next: (r) => {
-        this.result.set(r);
-        this.busy.set(false);
-      },
-      error: (e: ApiError) => {
-        this.error.set(e);
-        this.busy.set(false);
-      },
+  constructor() {
+    // On a phone the results start below the screen; bring a new result into view.
+    effect(() => {
+      if (this.store.result()) {
+        afterNextRender(() => this.scrollToResults(), { injector: this.injector });
+      }
     });
+  }
+
+  protected editDescription(): void {
+    this.mealInput().focus();
+  }
+
+  private scrollToResults(): void {
+    const el = this.results()?.nativeElement;
+    if (!el || el.getBoundingClientRect().top < window.innerHeight - 80) return;
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView?.({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
   }
 }

@@ -1,0 +1,15 @@
+<mat-icon aria-hidden="true">error</mat-icon>
+<div class="body">
+  <h2>{{ title() }}</h2>
+  <p>{{ error().message }}</p>
+  @if (error().requestId) {
+    <p class="reference">Reference: {{ error().requestId }}</p>
+  }
+  <div class="actions">
+    @if (kind() === 'input') {
+      <button matButton="outlined" type="button" (click)="edit.emit()">Edit description</button>
+    } @else {
+      <button matButton="outlined" type="button" (click)="retry.emit()">Try again</button>
+    }
+  </div>
+</div>

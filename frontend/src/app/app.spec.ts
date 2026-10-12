@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { App } from './app';
-import { MealApiService } from './meal/meal-api.service';
+import { ApiError, MealApiService } from './meal/meal-api.service';
 
 describe('App', () => {
   const analyze = vi.fn();
@@ -33,5 +33,26 @@ describe('App', () => {
     [...el.querySelectorAll('button')].find((b) => b.textContent?.includes('Calculate'))!.click();
 
     expect(analyze).toHaveBeenCalledWith('2 eggs');
+  });
+
+  it('focuses the description when an error asks to edit it', async () => {
+    analyze.mockReturnValue(throwError(() => new ApiError('NO_FOOD_FOUND', 'No food found.')));
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const el: HTMLElement = fixture.nativeElement;
+    document.body.appendChild(el); // focus only works on attached elements
+
+    const textarea = el.querySelector('textarea')!;
+    textarea.value = 'hello';
+    textarea.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
+    [...el.querySelectorAll('button')].find((b) => b.textContent?.includes('Calculate'))!.click();
+    await fixture.whenStable();
+
+    const edit = [...el.querySelectorAll('app-error-panel button')][0] as HTMLButtonElement;
+    expect(edit.textContent).toContain('Edit description');
+    edit.click();
+    expect(document.activeElement).toBe(textarea);
+    el.remove();
   });
 });

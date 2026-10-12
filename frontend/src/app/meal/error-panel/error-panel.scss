@@ -1,0 +1,36 @@
+:host {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+mat-icon {
+  flex: none;
+}
+
+.body {
+  min-width: 0;
+}
+
+h2 {
+  margin: 0 0 4px;
+  font: var(--mat-sys-title-medium);
+}
+
+p {
+  margin: 0;
+}
+
+.reference {
+  margin-top: 8px;
+  font: var(--mat-sys-body-small);
+  overflow-wrap: anywhere;
+}
+
+.actions {
+  margin-top: 12px;
+}

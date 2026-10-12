@@ -19,7 +19,16 @@ main {
 }
 
 .results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   margin-top: 24px;
+  scroll-margin-top: 16px;
+}
+
+.dimmed {
+  opacity: 0.4;
+  transition: opacity 150ms;
 }
 
 footer {

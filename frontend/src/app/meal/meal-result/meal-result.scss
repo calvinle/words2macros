@@ -4,6 +4,13 @@
   gap: 12px;
 }
 
+.results-for {
+  margin: 0;
+  font: var(--mat-sys-body-medium);
+  color: var(--mat-sys-on-surface-variant);
+  overflow-wrap: anywhere;
+}
+
 .foods-heading {
   margin: 12px 0 0;
   font: var(--mat-sys-title-medium);

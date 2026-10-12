@@ -20,6 +20,7 @@ import { WarningLineComponent } from '../warning-line/warning-line';
 })
 export class MealResultComponent {
   readonly result = input.required<AnalyzeResponse>();
+  readonly stale = input(false); // the input was edited after this result
 
   readonly severity = WARNING_SEVERITY;
   readonly estimated = computed(() => estimatedCount(this.result().items));

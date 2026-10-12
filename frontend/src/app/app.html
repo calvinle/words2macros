@@ -3,18 +3,32 @@
 </mat-toolbar>
 
 <main>
-  <app-meal-input [busy]="busy()" (submitted)="onSubmit($event)" />
+  <app-meal-input
+    [busy]="store.busy()"
+    (submitted)="store.submit($event)"
+    (textChange)="store.draft.set($event)"
+  />
 
-  <!-- Loading and error display are placeholders until step 5. -->
-  <section class="results" aria-live="polite">
-    @if (busy()) {
-      <p>Calculating...</p>
+  <!-- Loading and errors announce themselves; this tells screen readers a result arrived. -->
+  <p class="visually-hidden" role="status">
+    {{ store.result() && !store.busy() ? 'Results ready.' : '' }}
+  </p>
+
+  <section class="results" #results>
+    @if (store.busy()) {
+      <app-loading-status />
     }
-    @if (error(); as e) {
-      <p role="alert">{{ e.code }}: {{ e.message }}</p>
+    @if (store.error(); as e) {
+      <app-error-panel [error]="e" (retry)="store.retry()" (edit)="editDescription()" />
     }
-    @if (result(); as r) {
-      <app-meal-result [result]="r" />
+    @if (store.result(); as r) {
+      <app-meal-result
+        [result]="r"
+        [stale]="store.stale()"
+        [class.dimmed]="store.busy()"
+        [attr.aria-busy]="store.busy()"
+        [attr.inert]="store.busy() ? '' : null"
+      />
     }
   </section>
 </main>

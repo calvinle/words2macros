@@ -1,3 +1,12 @@
+<p class="results-for">
+  Results for: <q>{{ result().text }}</q>
+</p>
+@if (stale()) {
+  <app-warning-line class="stale">
+    The description has changed since this result. Calculate again to update it.
+  </app-warning-line>
+}
+
 <app-meal-totals [totals]="result().totals" [estimated]="estimated() > 0" />
 
 @if (estimated() > 0) {
