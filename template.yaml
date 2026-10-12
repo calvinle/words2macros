@@ -21,7 +21,10 @@ Resources:
     Type: AWS::Serverless::HttpApi
     Properties:
       CorsConfiguration:
-        AllowOrigins: ["*"] # lock to the frontend's address once it exists
+        # Only the hosted site and the local dev server may call the API from a browser.
+        AllowOrigins:
+          - !Sub https://${SiteDistribution.DomainName}
+          - http://localhost:4200
         AllowMethods: [POST]
         AllowHeaders: [content-type]
       DefaultRouteSettings:
@@ -188,6 +191,67 @@ Resources:
                   ArnEquals:
                     iam:PolicyARN: !Ref DenyBedrockPolicy
 
+  # --- Frontend hosting: a private S3 bucket that only CloudFront can read ---
+  SiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  SiteOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub ${AWS::StackName}-site
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  SiteDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Comment: words2macros frontend
+        Enabled: true
+        DefaultRootObject: index.html
+        HttpVersion: http2and3
+        PriceClass: PriceClass_100 # North America and Europe edges only; cheapest
+        Origins:
+          - Id: site
+            DomainName: !GetAtt SiteBucket.RegionalDomainName
+            OriginAccessControlId: !GetAtt SiteOriginAccessControl.Id
+            S3OriginConfig:
+              OriginAccessIdentity: "" # empty: OAC is used instead of the older OAI
+        DefaultCacheBehavior:
+          TargetOriginId: site
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD]
+          Compress: true
+          # AWS managed policies. CachingOptimized follows each file's Cache-Control
+          # header (set by scripts/deploy-frontend.sh); SecurityHeadersPolicy adds
+          # HSTS, X-Content-Type-Options, X-Frame-Options and Referrer-Policy.
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          ResponseHeadersPolicyId: 67f7725c-6f97-4210-82d7-5512b31e9d03
+
+  SiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref SiteBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub ${SiteBucket.Arn}/*
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${SiteDistribution}
+
 Outputs:
   AnalyzeUrl:
     Description: POST meal descriptions here
@@ -195,3 +259,9 @@ Outputs:
   ReenableCommand:
     Description: Run this after the kill switch has stopped the analyze function
     Value: !Sub aws lambda delete-function-concurrency --function-name ${AnalyzeFunction}
+  SiteUrl:
+    Description: The hosted frontend
+    Value: !Sub https://${SiteDistribution.DomainName}
+  SiteBucket:
+    Description: Upload the built frontend here (scripts/deploy-frontend.sh does this)
+    Value: !Ref SiteBucket

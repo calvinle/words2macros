@@ -119,7 +119,23 @@ sam deploy
 
 The [`Makefile`](Makefile) is used by `sam build`: it installs the locked runtime dependencies as
 Linux arm64 wheels and copies the package. `boto3` is not bundled because the Lambda runtime
-already provides it. Remove everything with `sam delete`.
+already provides it.
+
+### Frontend
+
+The same stack creates a private S3 bucket and a CloudFront distribution in front of it (the
+bucket only accepts reads from CloudFront). After `sam deploy`, build and upload the Angular app:
+
+```sh
+scripts/deploy-frontend.sh
+```
+
+It prints the site URL (also the `SiteUrl` stack output). Hashed JS and CSS files are cached for a
+year; `index.html` is always revalidated, so a new upload shows up right away without a CloudFront
+invalidation. The API only accepts browser requests from that URL and `http://localhost:4200`.
+
+To remove everything, empty the site bucket first (CloudFormation can't delete a non-empty
+bucket), then run `sam delete`.
 
 ## Validation with Pydantic
 
