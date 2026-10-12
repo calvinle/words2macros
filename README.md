@@ -57,7 +57,7 @@ Errors share one shape, `{"error": {"code", "message", "request_id"}}`:
 | Status | Code | Meaning |
 |---|---|---|
 | 400 | `INVALID_REQUEST`, `INVALID_TEXT` | malformed request, or text blank or over 2,000 characters |
-| 422 | `NO_FOOD_FOUND`, `TOO_MANY_FOODS`, `UNPARSEABLE` | the text couldn't be turned into 1-10 foods |
+| 422 | `NO_FOOD_FOUND`, `TOO_MANY_FOODS`, `UNPARSEABLE` | the text couldn't be turned into 1-15 foods |
 | 502 | `MATCH_FAILED` | no usable database match or estimate |
 | 503 | `NUTRITION_DB_UNAVAILABLE`, `AI_UNAVAILABLE` | USDA or Bedrock is down or busy |
 | 500 | `INTERNAL_ERROR` | unexpected; details are logged, never returned |

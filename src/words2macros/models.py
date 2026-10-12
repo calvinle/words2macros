@@ -20,8 +20,9 @@ WarningCode = Literal[
 ]
 
 # Each food costs a USDA search and a Bedrock call, so cap foods per meal to bound
-# cost, response time and use of the shared USDA quota.
-MAX_ITEMS_PER_MEAL = 10
+# cost, response time and use of the shared USDA quota. 15 fits most recipe
+# ingredient lists.
+MAX_ITEMS_PER_MEAL = 15
 
 
 class StrictModel(BaseModel):

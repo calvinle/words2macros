@@ -3,6 +3,7 @@ import json
 import pytest
 from fakes import FakeBedrock
 
+from words2macros.models import MAX_ITEMS_PER_MEAL
 from words2macros.parse import ParseError, parse_meal
 
 GOOD_REPLY = json.dumps(
@@ -105,15 +106,15 @@ def test_too_many_foods_is_rejected_without_retry():
         "amount_source": "stated",
         "assumption": None,
     }
-    client = FakeBedrock(json.dumps({"items": [food] * 11}))
+    client = FakeBedrock(json.dumps({"items": [food] * (MAX_ITEMS_PER_MEAL + 1)}))
 
-    with pytest.raises(ParseError, match="more than 10 foods") as error:
-        parse_meal("eleven grapes, one at a time", client)
+    with pytest.raises(ParseError, match=f"more than {MAX_ITEMS_PER_MEAL} foods") as error:
+        parse_meal("sixteen grapes, one at a time", client)
     assert error.value.code == "TOO_MANY_FOODS"
     assert len(client.requests) == 1
 
 
-def test_ten_foods_is_allowed():
+def test_max_foods_is_allowed():
     food = {
         "name": "grape",
         "preparation": None,
@@ -122,6 +123,7 @@ def test_ten_foods_is_allowed():
         "assumption": None,
     }
 
-    result = parse_meal("ten grapes", FakeBedrock(json.dumps({"items": [food] * 10})))
+    reply = json.dumps({"items": [food] * MAX_ITEMS_PER_MEAL})
+    result = parse_meal("fifteen grapes", FakeBedrock(reply))
 
-    assert len(result.items) == 10
+    assert len(result.items) == MAX_ITEMS_PER_MEAL

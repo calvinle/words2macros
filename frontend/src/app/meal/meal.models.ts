@@ -1,7 +1,7 @@
 // Mirrors src/words2macros/models.py. Keep the two in sync.
 
 export const MAX_INPUT_CHARS = 2000; // parse.py
-export const MAX_ITEMS_PER_MEAL = 10; // models.py
+export const MAX_ITEMS_PER_MEAL = 15; // models.py
 
 export type AmountSource = 'stated' | 'estimated';
 export type MatchSource = 'usda' | 'ai_estimate';

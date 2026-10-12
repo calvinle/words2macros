@@ -21,7 +21,7 @@ def analyze_meal(
     client = client or make_client()
     parsed = parse_meal(text, client)
     # Each food waits on USDA and Bedrock for 1.5-2.5 s, so match them all at once
-    # instead of one after another. At most MAX_ITEMS_PER_MEAL (10) threads; the
+    # instead of one after another. At most MAX_ITEMS_PER_MEAL (15) threads; the
     # boto3 client is thread-safe. map() keeps the original order and re-raises the
     # first error.
     with ThreadPoolExecutor(max_workers=len(parsed.items)) as pool:
