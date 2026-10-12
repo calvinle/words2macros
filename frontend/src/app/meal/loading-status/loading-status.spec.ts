@@ -19,9 +19,9 @@ describe('LoadingStatusComponent', () => {
   it('changes its message as time passes', () => {
     const { text } = render();
     expect(text()).toBe(LOADING_MESSAGES[0].text);
-    vi.advanceTimersByTime(3000);
+    vi.advanceTimersByTime(1500);
     expect(text()).toBe(LOADING_MESSAGES[1].text);
-    vi.advanceTimersByTime(12000);
+    vi.advanceTimersByTime(13500);
     expect(text()).toBe(LOADING_MESSAGES[2].text);
   });
 

@@ -52,6 +52,10 @@ AI_UNAVAILABLE_MESSAGE = "The AI service is busy or unavailable. Try again in a 
 INTERNAL_ERROR_MESSAGE = "Something went wrong. Try again later."
 INVALID_REQUEST_MESSAGE = "The request must be JSON with a 'text' field."
 
+# True until this Lambda instance has handled its first request. Cold requests also
+# create the Bedrock client and read the USDA key from SSM, so they run slower.
+_cold_start = True
+
 
 @functools.cache
 def get_client() -> Any:
@@ -60,14 +64,17 @@ def get_client() -> Any:
 
 
 def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
+    global _cold_start
     started = time.monotonic()
     analyzed_at = datetime.now(UTC)
     request_id = getattr(context, "aws_request_id", None) or str(uuid.uuid4())
-    log: dict[str, Any] = {}
+    log: dict[str, Any] = {"cold_start": _cold_start}
+    _cold_start = False
+    timings: dict[str, int] = {}  # parse_ms, match_ms
 
     try:
         text = read_text(event)
-        meal = analyze_meal(text, get_client())
+        meal = analyze_meal(text, get_client(), timings=timings)
         body = AnalyzeResponse(
             **meal.model_dump(), text=text, request_id=request_id, analyzed_at=analyzed_at
         ).model_dump(mode="json")
@@ -93,6 +100,7 @@ def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
         log["stack"] = traceback.format_tb(e.__traceback__)
         code, message = "INTERNAL_ERROR", INTERNAL_ERROR_MESSAGE
 
+    log.update(timings)
     if code is not None:
         status = STATUS_BY_CODE[code]
         body = {"error": {"code": code, "message": message, "request_id": request_id}}

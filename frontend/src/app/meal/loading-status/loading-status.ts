@@ -4,11 +4,12 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 /**
  * Timed messages while a request runs. The API answers once at the end, so these
  * describe what is likely happening, without claiming any step has finished.
- * Timings come from the Lambda logs: parsing takes about 3 s, then about 2 s per food.
+ * Timings come from the Lambda logs (parse_ms, match_ms): reading the meal takes about
+ * 1.5 s, then matching takes about 2 s, with foods matched in parallel.
  */
 export const LOADING_MESSAGES = [
   { afterMs: 0, text: 'Reading the meal description...' },
-  { afterMs: 3000, text: 'Looking up each food in the USDA database...' },
+  { afterMs: 1500, text: 'Looking up each food in the USDA database...' },
   { afterMs: 15000, text: 'This is taking longer than usual. Larger meals take more time.' },
 ];
 

@@ -64,3 +64,24 @@ def test_a_failed_match_fails_the_meal():
 
     with pytest.raises(MatchError, match="banana"):
         analyze_meal("an apple, a banana and a cherry", RoutingBedrock(), search)
+
+
+def test_step_timings_are_recorded():
+    timings = {}
+    analyze_meal(
+        "an apple, a banana and a cherry", RoutingBedrock(), lambda q: [record(q)], timings
+    )
+
+    assert set(timings) == {"parse_ms", "match_ms"}
+    assert all(isinstance(ms, int) and ms >= 0 for ms in timings.values())
+
+
+def test_parse_time_is_kept_when_matching_fails():
+    def search(query: str) -> list[FoodMatch]:
+        raise MatchError("No match.")
+
+    timings = {}
+    with pytest.raises(MatchError):
+        analyze_meal("an apple, a banana and a cherry", RoutingBedrock(), search, timings)
+
+    assert set(timings) == {"parse_ms"}

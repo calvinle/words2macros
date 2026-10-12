@@ -137,6 +137,26 @@ invalidation. The API only accepts browser requests from that URL and `http://lo
 To remove everything, empty the site bucket first (CloudFormation can't delete a non-empty
 bucket), then run `sam delete`.
 
+## Monitoring
+
+Each request writes one JSON log line (never the meal text) with `status`, `code`,
+`duration_ms`, `items`, `warnings`, the time per step (`parse_ms`, `match_ms`) and whether it
+was the first request on a new Lambda instance (`cold_start`). In CloudWatch Logs Insights, on
+the analyze function's log group:
+
+```
+fields parse_ms, match_ms, duration_ms, items, cold_start
+| filter ispresent(parse_ms)
+| stats avg(parse_ms), avg(match_ms), avg(duration_ms), count(*) by cold_start
+```
+
+Lambda's own `REPORT` lines carry the cold-start setup time:
+
+```
+filter @type = "REPORT" and ispresent(@initDuration)
+| stats avg(@initDuration), max(@initDuration), count(*)
+```
+
 ## Validation with Pydantic
 
 Every payload that crosses a trust boundary (AI replies, HTTP requests, USDA data) is checked by a

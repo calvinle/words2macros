@@ -40,8 +40,10 @@ def pipeline(monkeypatch):
     calls = []
     outcome = {"result": MEAL}
 
-    def fake_analyze(text, client):
+    def fake_analyze(text, client, timings=None):
         calls.append(text)
+        if timings is not None:
+            timings["parse_ms"] = 3000
         if isinstance(outcome["result"], Exception):
             raise outcome["result"]
         return outcome["result"]
@@ -174,3 +176,22 @@ def test_log_has_timestamp_and_id_but_not_text(pipeline, caplog, fails):
     assert "timestamp" in line
     assert "duration_ms" in line
     assert TEXT not in record.getMessage()
+
+
+def test_log_has_step_timings(pipeline, caplog):
+    with caplog.at_level(logging.INFO):
+        call(event({"text": TEXT}))
+
+    [record] = [r for r in caplog.records if r.name == "root"]
+    assert json.loads(record.getMessage())["parse_ms"] == 3000
+
+
+def test_only_the_first_request_is_a_cold_start(pipeline, caplog, monkeypatch):
+    monkeypatch.setattr(handler, "_cold_start", True)
+
+    with caplog.at_level(logging.INFO):
+        call(event({"text": TEXT}))
+        call(event({"text": TEXT}))
+
+    lines = [json.loads(r.getMessage()) for r in caplog.records if r.name == "root"]
+    assert [line["cold_start"] for line in lines] == [True, False]
