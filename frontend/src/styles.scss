@@ -37,3 +37,13 @@ body {
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
+
+// Text for screen readers only.
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

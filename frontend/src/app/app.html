@@ -5,8 +5,8 @@
 <main>
   <app-meal-input [busy]="busy()" (submitted)="onSubmit($event)" />
 
-  <!-- Temporary: raw output for testing. Steps 4 and 5 replace this. -->
-  <section aria-live="polite">
+  <!-- Loading and error display are placeholders until step 5. -->
+  <section class="results" aria-live="polite">
     @if (busy()) {
       <p>Calculating...</p>
     }
@@ -14,7 +14,7 @@
       <p role="alert">{{ e.code }}: {{ e.message }}</p>
     }
     @if (result(); as r) {
-      <pre>{{ r | json }}</pre>
+      <app-meal-result [result]="r" />
     }
   </section>
 </main>

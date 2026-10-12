@@ -1,0 +1,10 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.foods-heading {
+  margin: 12px 0 0;
+  font: var(--mat-sys-title-medium);
+}

@@ -1,14 +1,14 @@
-import { JsonPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { ApiError, MealApiService } from './meal/meal-api.service';
 import { MealInputComponent } from './meal/meal-input/meal-input';
+import { MealResultComponent } from './meal/meal-result/meal-result';
 import { AnalyzeResponse } from './meal/meal.models';
 
 @Component({
   selector: 'app-root',
-  imports: [JsonPipe, MatToolbarModule, MealInputComponent],
+  imports: [MatToolbarModule, MealInputComponent, MealResultComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

@@ -4,31 +4,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { environment } from '../../environments/environment';
 import { ApiError, MealApiService } from './meal-api.service';
+import { MEAL } from './meal.fixtures';
 import { AnalyzeResponse } from './meal.models';
-
-const MEAL: AnalyzeResponse = {
-  items: [
-    {
-      name: 'gravy',
-      preparation: null,
-      grams: 60,
-      amount_source: 'estimated',
-      assumption: '1 serving (1/4 cup)',
-      match: {
-        source: 'usda',
-        fdc_id: 123,
-        description: 'Gravy, turkey, canned',
-        per_100g: { calories_kcal: 51, protein_g: 2.6, carbs_g: 5.1, fat_g: 2.1 },
-      },
-      nutrients: { calories_kcal: 30.6, protein_g: 1.56, carbs_g: 3.06, fat_g: 1.26 },
-    },
-  ],
-  totals: { calories_kcal: 30.6, protein_g: 1.56, carbs_g: 3.06, fat_g: 1.26 },
-  warnings: [],
-  text: 'a serving of gravy',
-  request_id: 'req-1',
-  analyzed_at: '2026-10-11T00:00:00Z',
-};
 
 describe('MealApiService', () => {
   let service: MealApiService;
@@ -54,11 +31,11 @@ describe('MealApiService', () => {
 
   it('posts the text and passes a success response through', () => {
     let result: AnalyzeResponse | undefined;
-    service.analyze('a serving of gravy').subscribe((r) => (result = r));
+    service.analyze(MEAL.text).subscribe((r) => (result = r));
 
     const req = http.expectOne(environment.analyzeUrl);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ text: 'a serving of gravy' });
+    expect(req.request.body).toEqual({ text: MEAL.text });
     req.flush(MEAL);
 
     expect(result).toEqual(MEAL);

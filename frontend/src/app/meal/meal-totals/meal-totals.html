@@ -1,0 +1,34 @@
+<mat-card appearance="outlined">
+  <mat-card-content>
+    <div class="heading">
+      <h2>Meal total</h2>
+      @if (estimated()) {
+        <span class="estimate-note">Includes estimated amounts</span>
+      }
+    </div>
+
+    <p class="calories">
+      {{ estimated() ? '~' : '' }}{{ totals().calories_kcal | number: '1.0-0' }}
+      <span class="unit">kcal</span>
+    </p>
+
+    <dl class="macros">
+      <div><dt><span class="dot protein"></span>Protein</dt><dd>{{ totals().protein_g | number: '1.1-1' }} g</dd></div>
+      <div><dt><span class="dot carbs"></span>Carbs</dt><dd>{{ totals().carbs_g | number: '1.1-1' }} g</dd></div>
+      <div><dt><span class="dot fat"></span>Fat</dt><dd>{{ totals().fat_g | number: '1.1-1' }} g</dd></div>
+    </dl>
+
+    @if (shares(); as s) {
+      <div class="bar" role="img" [attr.aria-label]="barLabel()">
+        <span class="protein" [style.flex-grow]="s.protein"></span>
+        <span class="carbs" [style.flex-grow]="s.carbs"></span>
+        <span class="fat" [style.flex-grow]="s.fat"></span>
+      </div>
+      <div class="bar-legend" aria-hidden="true">
+        <span>P {{ s.protein }}%</span>
+        <span>C {{ s.carbs }}%</span>
+        <span>F {{ s.fat }}%</span>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

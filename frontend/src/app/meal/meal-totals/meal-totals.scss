@@ -1,0 +1,97 @@
+:host {
+  display: block;
+
+  // Distinct hues so the three macros never rely on shade alone.
+  --macro-protein: #00897b;
+  --macro-carbs: #f2a900;
+  --macro-fat: #8e24aa;
+}
+
+.heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 16px;
+
+  h2 {
+    margin: 0;
+    font: var(--mat-sys-title-medium);
+  }
+}
+
+.estimate-note {
+  font: var(--mat-sys-label-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.calories {
+  margin: 8px 0 12px;
+  font: var(--mat-sys-display-small);
+
+  .unit {
+    font: var(--mat-sys-title-medium);
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.macros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0 0 12px;
+
+  div {
+    display: flex;
+    gap: 6px;
+  }
+
+  dt {
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 50%;
+}
+
+.bar {
+  display: flex;
+  gap: 2px;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+
+  span {
+    flex-basis: 0;
+  }
+}
+
+.protein {
+  background: var(--macro-protein);
+}
+
+.carbs {
+  background: var(--macro-carbs);
+}
+
+.fat {
+  background: var(--macro-fat);
+}
+
+.bar-legend {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font: var(--mat-sys-label-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
