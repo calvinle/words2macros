@@ -124,6 +124,37 @@ def test_no_results_retries_search_without_preparation():
     assert search.queries == ["fried zorbnut", "zorbnut"]
 
 
+def test_no_fitting_candidate_retries_search_without_preparation():
+    # Real case: "raw almonds" returns raw fruits and vegetables, "almonds" the nuts.
+    gravy_records = fixture_search("usda_search_gravy.json")("gravy")
+    potato_records = fixture_search("usda_search_mashed_potatoes.json")("potato")
+    queries = []
+
+    def search(query: str):
+        queries.append(query)
+        return potato_records if query == "brown gravy" else gravy_records
+
+    item = GRAVY.model_copy(update={"preparation": "brown"})
+    client = FakeBedrock(pick(None), pick(GRAVY_NFS_ID))
+
+    match = match_item(item, client, search)
+
+    assert queries == ["brown gravy", "gravy"]
+    assert match.fdc_id == GRAVY_NFS_ID
+    second = json.loads(client.requests[1]["messages"][0]["content"][0]["text"])
+    assert second["food"]["preparation"] == "brown"  # still guides the choice
+
+
+def test_no_fitting_candidate_without_preparation_estimates_after_one_search():
+    search = fixture_search("usda_search_gravy.json")
+    client = FakeBedrock(pick(None), ESTIMATE_REPLY)
+
+    match = match_item(GRAVY, client, search)
+
+    assert search.queries == ["gravy"]
+    assert match.source == "ai_estimate"
+
+
 def test_negative_estimate_is_retried():
     bad = json.dumps({**json.loads(ESTIMATE_REPLY), "fat_g": -2})
     client = FakeBedrock(bad, ESTIMATE_REPLY)

@@ -85,14 +85,19 @@ def match_item(
     client: Any,
     search: Callable[[str], list[FoodMatch]] = search_foods,
 ) -> FoodMatch:
-    candidates = search(label(item))
-    if not candidates and item.preparation:
-        candidates = search(item.name)
+    # USDA weighs common words like "raw" heavily: "raw almonds" returns raw fruits
+    # and vegetables, none of them almonds. So if nothing fits, search by name alone.
+    # The AI still sees the preparation when choosing, so "raw" still steers the pick.
+    queries = [label(item)]
+    if item.preparation:
+        queries.append(item.name)
 
-    if candidates:
-        chosen = choose_match(item, candidates, client)
-        if chosen is not None:
-            return chosen
+    for query in queries:
+        candidates = search(query)
+        if candidates:
+            chosen = choose_match(item, candidates, client)
+            if chosen is not None:
+                return chosen
     return estimate_nutrients(item, client)
 
 
