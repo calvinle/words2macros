@@ -15,6 +15,7 @@ GOOD_REPLY = json.dumps(
                 "grams": 190,
                 "amount_source": "estimated",
                 "assumption": "1 medium russet potato",
+                "dry_amount": False,
             },
             {
                 "name": "beef gravy",
@@ -22,6 +23,7 @@ GOOD_REPLY = json.dumps(
                 "grams": 60,
                 "amount_source": "estimated",
                 "assumption": "1 serving, about 1/4 cup",
+                "dry_amount": False,
             },
         ]
     }
@@ -50,6 +52,25 @@ def test_good_reply_is_parsed():
 
     assert [i.name for i in result.items] == ["russet potato", "beef gravy"]
     assert len(client.requests) == 1
+
+
+def test_dry_amount_is_parsed():
+    reply = json.dumps(
+        {
+            "items": [
+                {
+                    "name": "garbanzo beans",
+                    "preparation": "raw",
+                    "grams": 400,
+                    "amount_source": "stated",
+                    "assumption": "2 cups raw garbanzo beans = about 400 g",
+                    "dry_amount": True,
+                }
+            ]
+        }
+    )
+
+    assert parse_meal("2 cups of garbanzo beans raw", FakeBedrock(reply)).items[0].dry_amount
 
 
 def test_request_sets_max_tokens_and_schema():

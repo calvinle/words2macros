@@ -59,6 +59,7 @@ function item(v: unknown, path: string): void {
   if (i['amount_source'] === 'estimated' && i['assumption'] === null) {
     fail(`${path}.assumption`, 'an estimated amount must state its assumption');
   }
+  if (typeof i['dry_amount'] !== 'boolean') fail(`${path}.dry_amount`, 'expected true or false');
 
   const m = object(i['match'], `${path}.match`);
   oneOf(m['source'], `${path}.match.source`, ['usda', 'ai_estimate']);

@@ -18,6 +18,7 @@ WarningCode = Literal[
     "ENERGY_MISMATCH",  # calories far from 4P + 4C + 9F + 7A, likely a bad match
     "OVER_2000G",  # implausibly large single item
     "FIBER_NOT_REPORTED",  # the record has no fiber value; left out of the total
+    "DRY_AMOUNT",  # counted as dry, uncooked weight (beans, grains, pasta)
 ]
 
 # Each food costs a USDA search and a Bedrock call, so cap foods per meal to bound
@@ -39,6 +40,10 @@ class ParsedItem(StrictModel):
     grams: float = Field(gt=0)
     amount_source: AmountSource
     assumption: str | None = None
+    # True when grams are the dry, uncooked weight of a food that absorbs water when
+    # cooked (dried beans, grains, pasta, oats). Those weigh 2-3 times less than the
+    # same volume cooked, so the user is told how the amount was counted.
+    dry_amount: bool = False
 
     @model_validator(mode="after")
     def estimated_needs_assumption(self) -> "ParsedItem":
@@ -92,6 +97,7 @@ class ItemResult(StrictModel):
     grams: float = Field(gt=0)
     amount_source: AmountSource
     assumption: str | None = None
+    dry_amount: bool = False
     match: FoodMatch
     nutrients: Nutrients
 

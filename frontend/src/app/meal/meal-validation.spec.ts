@@ -38,6 +38,7 @@ describe('validateAnalyzeResponse', () => {
     ['negative fat', (m: any) => (m.items[1].nutrients.fat_g = -0.1), 'items[1].nutrients.fat_g'],
     ['zero grams', (m: any) => (m.items[0].grams = 0), 'items[0].grams'],
     ['bad amount source', (m: any) => (m.items[0].amount_source = 'guessed'), 'amount_source'],
+    ['missing dry flag', (m: any) => delete m.items[0].dry_amount, 'items[0].dry_amount'],
     ['estimate without assumption', (m: any) => (m.items[0].assumption = null), 'assumption'],
     ['USDA match without ID', (m: any) => (m.items[0].match.fdc_id = null), 'match.fdc_id'],
     ['unknown warning code', (m: any) => (m.warnings[0].code = 'NEW_CODE'), 'warnings[0].code'],

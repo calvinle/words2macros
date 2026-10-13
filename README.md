@@ -29,7 +29,8 @@ amounts. Nutrient values come from the
 4. **Validate (code):** every payload is checked by a Pydantic model (see
    [Validation with Pydantic](#validation-with-pydantic)), and sanity checks add warnings:
    estimated amounts, calorie-dense estimates, calories that don't add up from the macros and
-   alcohol (4/4/9/7 kcal per gram), items over 2,000 g, and records that don't report fiber.
+   alcohol (4/4/9/7 kcal per gram), items over 2,000 g, records that don't report fiber, and amounts counted as dry, uncooked
+   weight (dried beans, grains, pasta).
 
 ## Architecture
 

@@ -14,6 +14,7 @@ export const WARNING_CODES = [
   'ENERGY_MISMATCH', // calories far from 4P + 4C + 9F + 7A, likely a bad match
   'OVER_2000G', // implausibly large single item
   'FIBER_NOT_REPORTED', // the record has no fiber value; left out of the total
+  'DRY_AMOUNT', // counted as dry, uncooked weight (beans, grains, pasta)
 ] as const;
 export type WarningCode = (typeof WARNING_CODES)[number];
 
@@ -38,7 +39,8 @@ export interface ItemResult {
   preparation: string | null;
   grams: number;
   amount_source: AmountSource;
-  assumption: string | null;
+  assumption: string | null; // how grams were decided, e.g. "2 cups = about 400 g"
+  dry_amount: boolean; // grams are the dry, uncooked weight
   match: FoodMatch;
   nutrients: Nutrients;
 }

@@ -1,6 +1,7 @@
 from words2macros.checks import (
     check_amount_estimated,
     check_calorie_dense_estimate,
+    check_dry_amount,
     check_energy,
     check_fiber_reported,
     check_nutrients_estimated,
@@ -146,3 +147,24 @@ def test_unreported_fiber_warns():
 
 def test_reported_fiber_does_not_warn():
     assert check_fiber_reported(item(), match(fiber_g=0), 0) == []
+
+
+def test_dry_amount_explains_how_it_was_counted():
+    chickpeas = item(
+        name="garbanzo beans",
+        preparation="raw",
+        grams=400,
+        amount_source="stated",
+        assumption="2 cups raw garbanzo beans = about 400 g",
+        dry_amount=True,
+    )
+
+    [warning] = check_dry_amount(chickpeas, 0)
+
+    assert warning.code == "DRY_AMOUNT"
+    assert "400 g of raw garbanzo beans was calculated as dry, uncooked weight" in warning.message
+    assert '"canned"' in warning.message
+
+
+def test_amount_as_eaten_has_no_dry_note():
+    assert check_dry_amount(item(), 0) == []

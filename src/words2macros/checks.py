@@ -126,10 +126,28 @@ def check_fiber_reported(item: ParsedItem, match: FoodMatch, index: int) -> list
     ]
 
 
+def check_dry_amount(item: ParsedItem, index: int) -> list[MealWarning]:
+    if not item.dry_amount:
+        return []
+    return [
+        MealWarning(
+            code="DRY_AMOUNT",
+            message=(
+                f"The {format_grams(item.grams)} g of {label(item)} was calculated as dry, "
+                "uncooked weight. Dry beans, grains and pasta take up 2 to 3 times the volume "
+                'once cooked, so if this was measured cooked or from a can, add "cooked" or '
+                '"canned" to the description.'
+            ),
+            item_index=index,
+        )
+    ]
+
+
 def check_item(item: ParsedItem, match: FoodMatch, index: int) -> list[MealWarning]:
     """All warnings for one item, in a stable order."""
     return [
         *check_amount_estimated(item, index),
+        *check_dry_amount(item, index),
         *check_calorie_dense_estimate(item, match, index),
         *check_nutrients_estimated(item, match, index),
         *check_energy(match, index),

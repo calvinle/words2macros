@@ -35,6 +35,9 @@ the amount is for the ingredient: use the ingredient raw ("russet potato", "raw"
 weight. Count only foods the person mentioned. In assumption, name common additions they did \
 not mention as not counted, for example "1 medium russet potato, raw weight; butter and milk \
 not mentioned, not counted".
+- dry_amount: true only when grams are the dry, uncooked weight of a food that absorbs water \
+when cooked: dried beans, chickpeas and lentils, rice and other grains, pasta, oats. Otherwise \
+false, including raw meat, raw vegetables, fruit and anything already cooked or canned.
 - Leave out plain water, and black coffee or tea, when they are only used for cooking or have \
 no calories.
 - amount_source:
@@ -66,8 +69,16 @@ OUTPUT_SCHEMA = {
                     "grams": {"type": "number"},
                     "amount_source": {"type": "string", "enum": ["stated", "estimated"]},
                     "assumption": {"type": ["string", "null"]},
+                    "dry_amount": {"type": "boolean"},
                 },
-                "required": ["name", "preparation", "grams", "amount_source", "assumption"],
+                "required": [
+                    "name",
+                    "preparation",
+                    "grams",
+                    "amount_source",
+                    "assumption",
+                    "dry_amount",
+                ],
                 "additionalProperties": False,
             },
         }

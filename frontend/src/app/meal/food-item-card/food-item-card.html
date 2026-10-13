@@ -32,6 +32,10 @@
       }
     </p>
 
+    @if (!estimated() && item().assumption) {
+      <p class="assumption">{{ item().assumption }}</p>
+    }
+
     @for (w of warnings(); track $index) {
       <app-warning-line [severity]="severity[w.code]">{{ w.message }}</app-warning-line>
     }

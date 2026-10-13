@@ -11,6 +11,7 @@ export const MEAL: AnalyzeResponse = {
       grams: 202,
       amount_source: 'estimated',
       assumption: '1 medium russet potato',
+      dry_amount: false,
       match: {
         source: 'usda',
         fdc_id: 2709492,
@@ -39,6 +40,7 @@ export const MEAL: AnalyzeResponse = {
       grams: 60,
       amount_source: 'estimated',
       assumption: '1 serving of gravy',
+      dry_amount: false,
       match: {
         source: 'usda',
         fdc_id: 2707149,
@@ -95,6 +97,7 @@ export const STATED_ITEM: ItemResult = {
   grams: 150,
   amount_source: 'stated',
   assumption: null,
+  dry_amount: false,
   match: {
     source: 'usda',
     fdc_id: 171477,
@@ -136,6 +139,7 @@ export const TEQUILA_ITEM: ItemResult = {
   grams: 45,
   amount_source: 'stated',
   assumption: null,
+  dry_amount: false,
   match: {
     source: 'usda',
     fdc_id: 2710705,
@@ -150,4 +154,35 @@ export const TEQUILA_ITEM: ItemResult = {
     },
   },
   nutrients: { calories_kcal: 104, protein_g: 0, carbs_g: 0, fat_g: 0, alcohol_g: 15, fiber_g: 0 },
+};
+
+/** "2 cups of garbanzo beans raw", counted as dry chickpeas (real response, 2026-10-13). */
+export const DRY_ITEM: ItemResult = {
+  name: 'garbanzo beans',
+  preparation: 'raw',
+  grams: 400,
+  amount_source: 'stated',
+  assumption: '2 cups raw garbanzo beans = about 400 g',
+  dry_amount: true,
+  match: {
+    source: 'usda',
+    fdc_id: 173756,
+    description: 'Chickpeas (garbanzo beans, bengal gram), mature seeds, raw',
+    per_100g: {
+      calories_kcal: 378,
+      protein_g: 20.5,
+      carbs_g: 62.95,
+      fat_g: 6.04,
+      alcohol_g: 0,
+      fiber_g: 12.2,
+    },
+  },
+  nutrients: {
+    calories_kcal: 1512,
+    protein_g: 82,
+    carbs_g: 251.8,
+    fat_g: 24.2,
+    alcohol_g: 0,
+    fiber_g: 48.8,
+  },
 };

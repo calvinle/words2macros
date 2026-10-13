@@ -55,6 +55,15 @@ def test_only_estimated_item_warns():
     assert [(w.code, w.item_index) for w in meal.warnings] == [("AMOUNT_ESTIMATED", 0)]
 
 
+def test_dry_amount_flag_carried_through_with_a_note():
+    dry = GRAVY.model_copy(update={"dry_amount": True})
+
+    meal = build_meal_result([(dry, GRAVY_MATCH)])
+
+    assert meal.items[0].dry_amount is True
+    assert [w.code for w in meal.warnings] == ["DRY_AMOUNT"]
+
+
 def test_unreported_fiber_is_left_out_of_the_total_with_a_warning():
     no_fiber = GRAVY_MATCH.model_copy(
         update={"per_100g": GRAVY_MATCH.per_100g.model_copy(update={"fiber_g": None})}

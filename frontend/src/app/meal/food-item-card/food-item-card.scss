@@ -59,10 +59,12 @@ mat-card-content {
 }
 
 .macros,
+.assumption,
 .match {
   margin: 0;
 }
 
+.assumption,
 .match {
   font: var(--mat-sys-body-small);
   color: var(--mat-sys-on-surface-variant);

@@ -12,6 +12,7 @@ export const WARNING_SEVERITY: Record<WarningCode, Severity> = {
   ENERGY_MISMATCH: 'warning',
   OVER_2000G: 'warning',
   FIBER_NOT_REPORTED: 'info',
+  DRY_AMOUNT: 'info',
 };
 
 /** Whole-number percentages of calories from each macro. */
@@ -68,6 +69,11 @@ export const ITEM_CHECKS: { code: WarningCode; passed: string; flagged: string }
   },
   { code: 'OVER_2000G', passed: 'Weight under 2,000 g', flagged: 'Weight over 2,000 g' },
   { code: 'AMOUNT_ESTIMATED', passed: 'Amount stated', flagged: 'Amount estimated' },
+  {
+    code: 'DRY_AMOUNT',
+    passed: 'Amount is for the food as eaten',
+    flagged: 'Amount counted as dry, uncooked weight',
+  },
   {
     code: 'CALORIE_DENSE_ESTIMATE',
     passed: 'No estimated portion of a calorie-dense food',

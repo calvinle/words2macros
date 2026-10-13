@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AI_ESTIMATED_ITEM, MEAL, STATED_ITEM, TEQUILA_ITEM } from '../meal.fixtures';
+import { AI_ESTIMATED_ITEM, DRY_ITEM, MEAL, STATED_ITEM, TEQUILA_ITEM } from '../meal.fixtures';
 import { ItemResult, MealWarning } from '../meal.models';
 import { FoodItemCardComponent } from './food-item-card';
 
@@ -23,6 +23,18 @@ describe('FoodItemCardComponent', () => {
     const el = await render(STATED_ITEM);
     expect(el.querySelector('.badge')?.textContent).toContain('Stated');
     expect(el.querySelector('.grams')?.textContent?.trim()).toBe('150 g');
+  });
+
+  it('shows how a stated amount was converted to grams', async () => {
+    const el = await render(DRY_ITEM);
+    expect(el.querySelector('.assumption')?.textContent).toContain(
+      '2 cups raw garbanzo beans = about 400 g',
+    );
+    expect((await render(STATED_ITEM)).querySelector('.assumption')).toBeNull(); // grams given
+  });
+
+  it("leaves an estimate's assumption to its note, so it isn't shown twice", async () => {
+    expect((await render(MEAL.items[0])).querySelector('.assumption')).toBeNull();
   });
 
   it('shows alcohol only when there is some', async () => {
