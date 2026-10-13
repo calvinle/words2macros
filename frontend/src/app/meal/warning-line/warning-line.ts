@@ -28,10 +28,10 @@ import { Severity } from '../meal-format';
       color: var(--mat-sys-on-surface-variant);
     }
     :host(.warning) {
-      background: #fff4e5;
-      color: #663c00;
+      background: light-dark(#fff4e5, #3d2a10);
+      color: light-dark(#663c00, #ffdcb0);
       mat-icon {
-        color: #b45309;
+        color: light-dark(#b45309, #fbbf24);
       }
     }
     mat-icon {

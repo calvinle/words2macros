@@ -7,6 +7,8 @@ import {
   inject,
   viewChild,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { ErrorPanelComponent } from './meal/error-panel/error-panel';
@@ -14,12 +16,15 @@ import { LoadingStatusComponent } from './meal/loading-status/loading-status';
 import { MealInputComponent } from './meal/meal-input/meal-input';
 import { MealPageStore } from './meal/meal-page.store';
 import { MealResultComponent } from './meal/meal-result/meal-result';
+import { ThemeService } from './theme.service';
 
 @Component({
   selector: 'app-root',
   imports: [
     ErrorPanelComponent,
     LoadingStatusComponent,
+    MatButtonModule,
+    MatIconModule,
     MatToolbarModule,
     MealInputComponent,
     MealResultComponent,
@@ -29,6 +34,7 @@ import { MealResultComponent } from './meal/meal-result/meal-result';
 })
 export class App {
   protected readonly store = inject(MealPageStore);
+  protected readonly theme = inject(ThemeService);
   private readonly injector = inject(Injector);
   private readonly mealInput = viewChild.required(MealInputComponent);
   private readonly results = viewChild<ElementRef<HTMLElement>>('results');

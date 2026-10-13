@@ -1,5 +1,16 @@
-<mat-toolbar>
+<mat-toolbar class="app-bar">
   <h1 class="brand">words2macros</h1>
+  <span class="spacer"></span>
+  @let dark = theme.theme() === 'dark';
+  <button
+    mat-icon-button
+    type="button"
+    (click)="theme.toggle()"
+    [attr.aria-label]="dark ? 'Switch to light mode' : 'Switch to dark mode'"
+    [title]="dark ? 'Light mode' : 'Dark mode'"
+  >
+    <mat-icon>{{ dark ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
 </mat-toolbar>
 
 <main>

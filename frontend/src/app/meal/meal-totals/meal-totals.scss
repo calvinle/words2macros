@@ -2,9 +2,9 @@
   display: block;
 
   // Distinct hues so the three macros never rely on shade alone.
-  --macro-protein: #00897b;
+  --macro-protein: light-dark(#00897b, #4db6ac);
   --macro-carbs: #f2a900;
-  --macro-fat: #8e24aa;
+  --macro-fat: light-dark(#8e24aa, #ce93d8);
 }
 
 .heading {

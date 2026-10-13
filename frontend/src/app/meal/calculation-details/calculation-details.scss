@@ -62,11 +62,11 @@ h3 {
   }
 
   &.passed mat-icon {
-    color: #2e7d32;
+    color: light-dark(#2e7d32, #81c784);
   }
 
   &.warning mat-icon {
-    color: #b45309;
+    color: light-dark(#b45309, #fbbf24);
   }
 
   &.info mat-icon {

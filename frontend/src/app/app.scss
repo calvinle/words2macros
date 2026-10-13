@@ -1,12 +1,35 @@
+@use '@angular/material' as mat;
+
 :host {
   display: flex;
   flex-direction: column;
   min-height: 100%;
 }
 
+// Colored bar in the theme's primary color; on-primary keeps text and icons readable
+// in both modes (primary is dark blue in light mode, light blue in dark mode).
+.app-bar {
+  @include mat.toolbar-overrides(
+    (
+      container-background-color: var(--mat-sys-primary),
+      container-text-color: var(--mat-sys-on-primary),
+    )
+  );
+  @include mat.icon-button-overrides(
+    (
+      icon-color: var(--mat-sys-on-primary),
+      state-layer-color: var(--mat-sys-on-primary),
+    )
+  );
+}
+
 .brand {
   margin: 0;
   font: var(--mat-sys-title-large);
+}
+
+.spacer {
+  flex: 1;
 }
 
 main {
