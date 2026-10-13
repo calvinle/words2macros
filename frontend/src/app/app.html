@@ -5,6 +5,7 @@
 <main>
   <app-meal-input
     [busy]="store.busy()"
+    [initialText]="store.draft()"
     (submitted)="store.submit($event)"
     (textChange)="store.draft.set($event)"
   />

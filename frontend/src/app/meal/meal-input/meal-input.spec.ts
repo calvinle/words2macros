@@ -59,6 +59,17 @@ describe('MealInputComponent', () => {
     expect(emitted).toEqual([]);
   });
 
+  it('starts with the initial text, ready to submit', async () => {
+    const restored = TestBed.createComponent(MealInputComponent);
+    restored.componentRef.setInput('initialText', '2 eggs');
+    await restored.whenStable();
+    const box: HTMLTextAreaElement = restored.nativeElement.querySelector('textarea');
+
+    expect(box.value).toBe('2 eggs');
+    expect(restored.nativeElement.textContent).toContain('6 / 2000');
+    expect(restored.componentInstance.text.valid).toBe(true);
+  });
+
   it('fills the box from an example without submitting', async () => {
     const button = [...el.querySelectorAll('button')].find((b) =>
       b.textContent?.includes(EXAMPLE_MEALS[0].label),

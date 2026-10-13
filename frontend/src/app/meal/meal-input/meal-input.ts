@@ -1,5 +1,5 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { Component, ElementRef, computed, input, output, viewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, computed, input, output, viewChild } from '@angular/core';
 import { outputFromObservable, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -42,8 +42,9 @@ const tooLongMatcher: ErrorStateMatcher = {
   templateUrl: './meal-input.html',
   styleUrl: './meal-input.scss',
 })
-export class MealInputComponent {
+export class MealInputComponent implements OnInit {
   readonly busy = input(false); // true while a request runs
+  readonly initialText = input(''); // e.g. the description restored after a refresh
   readonly submitted = output<string>(); // the trimmed description
 
   readonly maxChars = MAX_INPUT_CHARS;
@@ -66,6 +67,10 @@ export class MealInputComponent {
   private readonly value = toSignal(this.text.valueChanges, { initialValue: '' });
   readonly length = computed(() => this.value().length);
   private readonly textarea = viewChild.required<ElementRef<HTMLTextAreaElement>>('textarea');
+
+  ngOnInit(): void {
+    if (this.initialText()) this.text.setValue(this.initialText());
+  }
 
   submit(): void {
     if (this.busy() || this.text.invalid) return;

@@ -35,8 +35,10 @@ export class App {
 
   constructor() {
     // On a phone the results start below the screen; bring a new result into view.
+    // Not one restored after a refresh: the user is already where they left off.
     effect(() => {
-      if (this.store.result()) {
+      const result = this.store.result();
+      if (result && result !== this.store.restoredResult) {
         afterNextRender(() => this.scrollToResults(), { injector: this.injector });
       }
     });

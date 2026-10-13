@@ -1,19 +1,30 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
 
 import { ApiError, MealApiService } from './meal-api.service';
+import { loadMeal, saveMeal } from './meal-session';
 import { AnalyzeResponse } from './meal.models';
 
-/** State for the meal page: the current request, its result or error, and the draft text. */
+/**
+ * State for the meal page: the current request, its result or error, and the draft text.
+ * The draft and the last result are saved for the browser tab, so a refresh restores them.
+ */
 @Injectable({ providedIn: 'root' })
 export class MealPageStore {
   private readonly api = inject(MealApiService);
+  private readonly saved = loadMeal();
   private lastText: string | null = null;
 
   readonly busy = signal(false);
-  readonly result = signal<AnalyzeResponse | null>(null);
+  readonly result = signal<AnalyzeResponse | null>(this.saved.result);
   readonly error = signal<ApiError | null>(null);
   /** What is in the input box right now, which may differ from what was analyzed. */
-  readonly draft = signal('');
+  readonly draft = signal(this.saved.draft);
+  /** The result restored on page load, if any (as opposed to a new one). */
+  readonly restoredResult = this.saved.result;
+
+  constructor() {
+    effect(() => saveMeal({ draft: this.draft(), result: this.result() }));
+  }
 
   /** True when the input was edited after the shown result was calculated. */
   readonly stale = computed(() => {

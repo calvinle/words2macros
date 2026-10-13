@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 
 import { ApiError, MealApiService } from './meal-api.service';
 import { MealPageStore } from './meal-page.store';
+import { loadMeal, saveMeal } from './meal-session';
 import { MEAL } from './meal.fixtures';
 import { AnalyzeResponse } from './meal.models';
 
@@ -12,6 +13,7 @@ describe('MealPageStore', () => {
   const analyze = vi.fn();
 
   beforeEach(() => {
+    sessionStorage.clear();
     analyze.mockReset();
     analyze.mockImplementation(() => (response = new Subject()));
     TestBed.configureTestingModule({
@@ -81,6 +83,25 @@ describe('MealPageStore', () => {
     expect(analyze).toHaveBeenCalledTimes(1);
   });
 
+  it('saves the draft and the result for the tab', () => {
+    store.draft.set(MEAL.text);
+    store.submit(MEAL.text);
+    succeed();
+    TestBed.tick(); // run the effect that saves
+
+    expect(loadMeal()).toEqual({ draft: MEAL.text, result: MEAL });
+  });
+
+  it('does not save an error, and drops the saved result with the shown one', () => {
+    store.submit(MEAL.text);
+    succeed();
+    store.submit('hello');
+    response.error(new ApiError('NO_FOOD_FOUND', 'No food.'));
+    TestBed.tick();
+
+    expect(loadMeal().result).toBeNull();
+  });
+
   it('is stale only when the draft differs from the analyzed text', () => {
     store.submit(MEAL.text);
     succeed();
@@ -88,5 +109,20 @@ describe('MealPageStore', () => {
     expect(store.stale()).toBe(false);
     store.draft.set('2 potatoes with gravy');
     expect(store.stale()).toBe(true);
+  });
+
+  it('restores the saved draft and result when created', () => {
+    saveMeal({ draft: '2 potatoes with gravy', result: MEAL });
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [{ provide: MealApiService, useValue: { analyze } }],
+    });
+
+    const restored = TestBed.inject(MealPageStore);
+
+    expect(restored.draft()).toBe('2 potatoes with gravy');
+    expect(restored.result()).toEqual(MEAL);
+    expect(restored.restoredResult).toEqual(MEAL);
+    expect(restored.stale()).toBe(true); // edited after the result, as before the refresh
   });
 });
