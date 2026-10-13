@@ -70,6 +70,32 @@ describe('MealInputComponent', () => {
     expect(restored.componentInstance.text.valid).toBe(true);
   });
 
+  const clearButton = () =>
+    [...el.querySelectorAll('button')].find((b) => b.textContent?.trim() === 'Clear')!;
+
+  it('clears the box, reports the edit and puts the cursor back in it', async () => {
+    const changes: string[] = [];
+    fixture.componentInstance.textChange.subscribe((t) => changes.push(t));
+    await type('2 eggs');
+
+    clearButton().click();
+    await fixture.whenStable();
+
+    expect(textarea().value).toBe('');
+    expect(changes.at(-1)).toBe(''); // so the saved draft is emptied too
+    expect(document.activeElement).toBe(textarea());
+    expect(clearButton().disabled).toBe(true);
+  });
+
+  it('disables Clear when the box is empty or while busy', async () => {
+    expect(clearButton().disabled).toBe(true);
+    await type('2 eggs');
+    expect(clearButton().disabled).toBe(false);
+    fixture.componentRef.setInput('busy', true);
+    await fixture.whenStable();
+    expect(clearButton().disabled).toBe(true);
+  });
+
   it('fills the box from an example without submitting', async () => {
     const button = [...el.querySelectorAll('button')].find((b) =>
       b.textContent?.includes(EXAMPLE_MEALS[0].label),

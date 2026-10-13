@@ -28,6 +28,9 @@
 </div>
 
 <div class="actions">
+  <button matButton type="button" [disabled]="busy() || length() === 0" (click)="clear()">
+    Clear
+  </button>
   <button matButton="filled" type="button" [disabled]="busy() || text.invalid" (click)="submit()">
     Calculate macros
   </button>

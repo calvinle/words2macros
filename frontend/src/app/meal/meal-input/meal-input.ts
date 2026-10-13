@@ -81,6 +81,12 @@ export class MealInputComponent implements OnInit {
     this.text.setValue(text);
   }
 
+  /** Empties the box (and so the saved draft) and puts the cursor back in it. */
+  clear(): void {
+    this.text.setValue('');
+    this.focus();
+  }
+
   focus(): void {
     this.textarea().nativeElement.focus();
   }
