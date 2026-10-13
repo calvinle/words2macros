@@ -36,6 +36,12 @@ body {
 }
 /* You can add global styles to this file, and also import other style files */
 
+// Length of the light/dark crossfade started by ThemeService (default is 250 ms).
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 300ms;
+}
+
 // Text for screen readers only.
 .visually-hidden {
   position: absolute;

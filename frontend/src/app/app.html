@@ -9,7 +9,12 @@
     [attr.aria-label]="dark ? 'Switch to light mode' : 'Switch to dark mode'"
     [title]="dark ? 'Light mode' : 'Dark mode'"
   >
-    <mat-icon>{{ dark ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    <!-- Separate branches so the new icon is a fresh element that plays its enter animation. -->
+    @if (dark) {
+      <mat-icon animate.enter="icon-enter">light_mode</mat-icon>
+    } @else {
+      <mat-icon animate.enter="icon-enter">dark_mode</mat-icon>
+    }
   </button>
 </mat-toolbar>
 

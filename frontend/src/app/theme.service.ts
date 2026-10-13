@@ -1,4 +1,4 @@
-import { DOCUMENT, Injectable, effect, inject, signal } from '@angular/core';
+import { DOCUMENT, Injectable, inject, signal } from '@angular/core';
 
 export type Theme = 'light' | 'dark';
 
@@ -15,19 +15,32 @@ export class ThemeService {
   readonly theme = signal<Theme>(this.savedTheme() ?? this.systemTheme());
 
   constructor() {
-    effect(() => {
-      this.document.documentElement.style.colorScheme = this.theme();
-    });
+    this.apply(this.theme());
   }
 
   toggle(): void {
     const next: Theme = this.theme() === 'dark' ? 'light' : 'dark';
-    this.theme.set(next);
     try {
       localStorage.setItem(STORAGE_KEY, next);
     } catch {
       // Storage blocked (private mode): the choice lasts until the page closes.
     }
+
+    // Crossfade the whole page where the browser supports View Transitions; the
+    // browser snapshots the old look, runs the callback, then fades to the new one.
+    const reduceMotion = this.document.defaultView?.matchMedia?.(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+    if (!this.document.startViewTransition || reduceMotion) {
+      this.apply(next);
+      return;
+    }
+    this.document.startViewTransition(() => this.apply(next));
+  }
+
+  private apply(theme: Theme): void {
+    this.theme.set(theme);
+    this.document.documentElement.style.colorScheme = theme;
   }
 
   private savedTheme(): Theme | null {
