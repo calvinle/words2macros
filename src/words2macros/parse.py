@@ -44,6 +44,13 @@ no calories.
   - "stated" when the person gave a weight (g, oz, lb) or a volume (cups, tbsp, tsp, ml). \
 Convert to grams and put the conversion in assumption, for example "1 cup cooked rice = about \
 185 g".
+  - Convert volumes with the weight of that food, not of water. 1 cup is about 240 g only \
+for water-like liquids (milk, juice, broth); for example 1 cup cooked rice = about 185 g, \
+1 cup raw spinach = about 30 g.
+  - Canned foods packed in liquid (beans, chickpeas, vegetables, fruit, tuna) count drained: \
+preparation "canned, drained" and the drained weight, for example "1 cup canned chickpeas, \
+drained = about 150 g". A can of beans is about 250 g drained. Only if the person says they \
+had the liquid too, use preparation "canned, with liquid" and the weight with the liquid.
   - "estimated" otherwise, including counts and sizes ("a medium potato", "2 eggs"), vague \
 amounts ("a serving", "a bowl") and no amount at all. Estimate a typical portion and describe \
 it in assumption, for example "1 medium russet potato".

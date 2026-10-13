@@ -20,7 +20,9 @@ You pick the USDA food record that best matches a food someone ate.
 
 Rules:
 - Match the food and its preparation: mashed is not baked, raw is not cooked. "dry" and "raw" \
-mean an uncooked record ("Oats, dry", "Pasta, dry"), never a cooked one.
+mean an uncooked record ("Oats, dry", "Pasta, dry"), never a cooked one. "canned, drained" \
+means a drained record ("canned, drained solids"); "canned, with liquid" means a "solids and \
+liquids" record.
 - The record must be the food itself, not a dish that contains it. For "gravy", pick a gravy, \
 not "Biscuit with gravy".
 - If the food is generic ("gravy", "cheese"), prefer a generic record ("Gravy, NFS") over a \
