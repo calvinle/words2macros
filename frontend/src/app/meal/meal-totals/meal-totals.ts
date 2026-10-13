@@ -15,6 +15,7 @@ import { Nutrients } from '../meal.models';
 export class MealTotalsComponent {
   readonly totals = input.required<Nutrients>();
   readonly estimated = input(false); // any amount in the meal was estimated
+  readonly fiberIncomplete = input(false); // some food has no fiber value
 
   readonly shares = computed(() => macroShares(this.totals()));
   readonly barLabel = computed(() => {

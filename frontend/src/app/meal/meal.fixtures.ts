@@ -1,4 +1,5 @@
-// Test data. MEAL is a real /analyze response from 2026-10-11.
+// Test data. MEAL is a real /analyze response from 2026-10-11, with fiber added from the
+// same USDA records.
 
 import { AnalyzeResponse, ItemResult } from './meal.models';
 
@@ -14,9 +15,23 @@ export const MEAL: AnalyzeResponse = {
         source: 'usda',
         fdc_id: 2709492,
         description: 'Potato, mashed, NFS',
-        per_100g: { calories_kcal: 114, protein_g: 2.15, carbs_g: 17.6, fat_g: 4.07, alcohol_g: 0 },
+        per_100g: {
+          calories_kcal: 114,
+          protein_g: 2.15,
+          carbs_g: 17.6,
+          fat_g: 4.07,
+          alcohol_g: 0,
+          fiber_g: 1.2,
+        },
       },
-      nutrients: { calories_kcal: 230.3, protein_g: 4.3, carbs_g: 35.6, fat_g: 8.2, alcohol_g: 0 },
+      nutrients: {
+        calories_kcal: 230.3,
+        protein_g: 4.3,
+        carbs_g: 35.6,
+        fat_g: 8.2,
+        alcohol_g: 0,
+        fiber_g: 2.4,
+      },
     },
     {
       name: 'gravy',
@@ -28,12 +43,33 @@ export const MEAL: AnalyzeResponse = {
         source: 'usda',
         fdc_id: 2707149,
         description: 'Gravy, NFS',
-        per_100g: { calories_kcal: 53, protein_g: 3.75, carbs_g: 4.81, fat_g: 2.36, alcohol_g: 0 },
+        per_100g: {
+          calories_kcal: 53,
+          protein_g: 3.75,
+          carbs_g: 4.81,
+          fat_g: 2.36,
+          alcohol_g: 0,
+          fiber_g: 0.4,
+        },
       },
-      nutrients: { calories_kcal: 31.8, protein_g: 2.2, carbs_g: 2.9, fat_g: 1.4, alcohol_g: 0 },
+      nutrients: {
+        calories_kcal: 31.8,
+        protein_g: 2.2,
+        carbs_g: 2.9,
+        fat_g: 1.4,
+        alcohol_g: 0,
+        fiber_g: 0.2,
+      },
     },
   ],
-  totals: { calories_kcal: 262.1, protein_g: 6.6, carbs_g: 38.4, fat_g: 9.6, alcohol_g: 0 },
+  totals: {
+    calories_kcal: 262.1,
+    protein_g: 6.6,
+    carbs_g: 38.4,
+    fat_g: 9.6,
+    alcohol_g: 0,
+    fiber_g: 2.7,
+  },
   warnings: [
     {
       code: 'AMOUNT_ESTIMATED',
@@ -63,9 +99,23 @@ export const STATED_ITEM: ItemResult = {
     source: 'usda',
     fdc_id: 171477,
     description: 'Chicken, broilers or fryers, breast, meat only, cooked, roasted',
-    per_100g: { calories_kcal: 165, protein_g: 31, carbs_g: 0, fat_g: 3.6, alcohol_g: 0 },
+    per_100g: {
+      calories_kcal: 165,
+      protein_g: 31,
+      carbs_g: 0,
+      fat_g: 3.6,
+      alcohol_g: 0,
+      fiber_g: 0,
+    },
   },
-  nutrients: { calories_kcal: 247.5, protein_g: 46.5, carbs_g: 0, fat_g: 5.4, alcohol_g: 0 },
+  nutrients: {
+    calories_kcal: 247.5,
+    protein_g: 46.5,
+    carbs_g: 0,
+    fat_g: 5.4,
+    alcohol_g: 0,
+    fiber_g: 0,
+  },
 };
 
 export const AI_ESTIMATED_ITEM: ItemResult = {
@@ -76,7 +126,7 @@ export const AI_ESTIMATED_ITEM: ItemResult = {
     source: 'ai_estimate',
     fdc_id: null,
     description: 'Beef stew (AI estimate)',
-    per_100g: { calories_kcal: 100, protein_g: 7, carbs_g: 8, fat_g: 4, alcohol_g: 0 },
+    per_100g: { calories_kcal: 100, protein_g: 7, carbs_g: 8, fat_g: 4, alcohol_g: 0, fiber_g: 1 },
   },
 };
 
@@ -90,7 +140,14 @@ export const TEQUILA_ITEM: ItemResult = {
     source: 'usda',
     fdc_id: 2710705,
     description: 'Tequila',
-    per_100g: { calories_kcal: 231, protein_g: 0, carbs_g: 0, fat_g: 0, alcohol_g: 33.4 },
+    per_100g: {
+      calories_kcal: 231,
+      protein_g: 0,
+      carbs_g: 0,
+      fat_g: 0,
+      alcohol_g: 33.4,
+      fiber_g: 0,
+    },
   },
-  nutrients: { calories_kcal: 104, protein_g: 0, carbs_g: 0, fat_g: 0, alcohol_g: 15 },
+  nutrients: { calories_kcal: 104, protein_g: 0, carbs_g: 0, fat_g: 0, alcohol_g: 15, fiber_g: 0 },
 };

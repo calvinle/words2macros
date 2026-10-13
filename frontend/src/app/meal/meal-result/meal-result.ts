@@ -5,6 +5,7 @@ import { FoodItemCardComponent } from '../food-item-card/food-item-card';
 import {
   WARNING_SEVERITY,
   estimatedCount,
+  fiberIncomplete,
   mealLevelWarnings,
   warningsForItem,
 } from '../meal-format';
@@ -30,6 +31,7 @@ export class MealResultComponent {
 
   readonly severity = WARNING_SEVERITY;
   readonly estimated = computed(() => estimatedCount(this.result().items));
+  readonly fiberIncomplete = computed(() => fiberIncomplete(this.result().items));
   readonly mealWarnings = computed(() => mealLevelWarnings(this.result().warnings));
   readonly itemWarnings = computed(() =>
     this.result().items.map((_, i) => warningsForItem(this.result().warnings, i)),

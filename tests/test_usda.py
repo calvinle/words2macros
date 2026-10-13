@@ -22,14 +22,16 @@ def test_parse_mashed_potatoes():
     assert first.source == "usda"
     assert first.fdc_id == 2709492
     assert first.description == "Potato, mashed, NFS"
-    assert first.per_100g == Nutrients(calories_kcal=114, protein_g=2.15, carbs_g=17.6, fat_g=4.07)
+    assert first.per_100g == Nutrients(
+        calories_kcal=114, protein_g=2.15, carbs_g=17.6, fat_g=4.07, fiber_g=1.2
+    )
 
 
 def test_parse_reads_alcohol():
     [tequila, sunrise] = parse_search_response(load("usda_search_tequila.json"))
 
     assert tequila.per_100g == Nutrients(
-        calories_kcal=231, protein_g=0, carbs_g=0, fat_g=0, alcohol_g=33.4
+        calories_kcal=231, protein_g=0, carbs_g=0, fat_g=0, alcohol_g=33.4, fiber_g=0
     )
     assert sunrise.per_100g.alcohol_g == 8.1
 
@@ -39,6 +41,28 @@ def test_missing_alcohol_means_zero():
     matches = parse_search_response(load("usda_search_mashed_potatoes.json"))
 
     assert all(m.per_100g.alcohol_g == 0 for m in matches)
+
+
+def test_missing_fiber_means_unknown():
+    # Some SR Legacy records, like "Gravy, CAMPBELL'S, chicken", have no fiber entry.
+    data = load("usda_search_gravy.json")
+    first = data["foods"][0]
+    first["foodNutrients"] = [n for n in first["foodNutrients"] if n["nutrientId"] != 1079]
+
+    [no_fiber, *rest] = parse_search_response(data)
+
+    assert no_fiber.per_100g.fiber_g is None
+    assert rest[0].per_100g.fiber_g == 0  # "Beef with gravy" reports 0, which is known
+
+
+def test_record_with_more_fiber_than_carbs_is_skipped():
+    data = load("usda_search_mashed_potatoes.json")
+    fiber = next(n for n in data["foods"][0]["foodNutrients"] if n["nutrientId"] == 1079)
+    fiber["value"] = 50
+
+    matches = parse_search_response(data)
+
+    assert 2709492 not in [m.fdc_id for m in matches]
 
 
 def test_parse_keeps_search_order():

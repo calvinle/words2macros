@@ -20,7 +20,11 @@ SAMPLES = [
 
 
 def macros(n) -> str:
-    return f"{n.calories_kcal:g} kcal | P {n.protein_g:g} g | C {n.carbs_g:g} g | F {n.fat_g:g} g"
+    fiber = "n/a" if n.fiber_g is None else f"{n.fiber_g:g} g"
+    return (
+        f"{n.calories_kcal:g} kcal | P {n.protein_g:g} g | C {n.carbs_g:g} g "
+        f"(fiber {fiber}) | F {n.fat_g:g} g"
+    )
 
 
 def main() -> None:

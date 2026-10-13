@@ -44,7 +44,12 @@
               per 100 g: {{ item.match.per_100g.calories_kcal | number: '1.0-1' }} kcal · P
               {{ item.match.per_100g.protein_g | number: '1.0-2' }} · C
               {{ item.match.per_100g.carbs_g | number: '1.0-2' }} · F
-              {{ item.match.per_100g.fat_g | number: '1.0-2' }}
+              {{ item.match.per_100g.fat_g | number: '1.0-2' }} · Fiber
+              @if (item.match.per_100g.fiber_g !== null) {
+                {{ item.match.per_100g.fiber_g | number: '1.0-2' }}
+              } @else {
+                not reported
+              }
               @if (item.match.per_100g.alcohol_g > 0) {
                 · Alcohol {{ item.match.per_100g.alcohol_g | number: '1.0-2' }}
               }
@@ -75,7 +80,12 @@
         <h3>Check <span class="who">code</span></h3>
         <div class="check passed">
           <mat-icon aria-hidden="true">check_circle</mat-icon>
-          Response matched the expected structure (validated with Pydantic)
+          Response matched the expected structure (validated with Pydantic, then again in the
+          browser)
+        </div>
+        <div class="check passed">
+          <mat-icon aria-hidden="true">check_circle</mat-icon>
+          Fiber is never more than carbs (fiber is counted inside carbs)
         </div>
         @for (item of result().items; track $index; let i = $index) {
           <div class="food">

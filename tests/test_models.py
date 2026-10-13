@@ -5,6 +5,7 @@ from words2macros.models import (
     FoodMatch,
     MealResult,
     MealWarning,
+    Nutrients,
     ParsedItem,
     ParseResult,
 )
@@ -96,6 +97,24 @@ def test_negative_nutrient_rejected():
                 "per_100g": {**PER_100G, "fat_g": -1},
             }
         )
+
+
+def test_fiber_is_optional():
+    match = FoodMatch.model_validate(
+        {"source": "ai_estimate", "description": "house gravy", "per_100g": PER_100G}
+    )
+
+    assert match.per_100g.fiber_g is None
+
+
+@pytest.mark.parametrize("fiber", [-1, 17.1], ids=["negative", "more-than-carbs"])
+def test_invalid_fiber_rejected(fiber):
+    with pytest.raises(ValidationError):
+        Nutrients.model_validate({**PER_100G, "fiber_g": fiber})
+
+
+def test_fiber_equal_to_carbs_allowed():
+    assert Nutrients.model_validate({**PER_100G, "fiber_g": 17}).fiber_g == 17
 
 
 def test_valid_meal_result():

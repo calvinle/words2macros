@@ -8,7 +8,7 @@ import {
 import { MEAL, STATED_ITEM } from './meal.fixtures';
 import { MealWarning } from './meal.models';
 
-const NONE = { calories_kcal: 0, protein_g: 0, carbs_g: 0, fat_g: 0, alcohol_g: 0 };
+const NONE = { calories_kcal: 0, protein_g: 0, carbs_g: 0, fat_g: 0, alcohol_g: 0, fiber_g: 0 };
 
 describe('macroShares', () => {
   it('splits calories 4/4/9 and adds up to 100', () => {

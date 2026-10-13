@@ -2,6 +2,7 @@ from words2macros.checks import (
     check_amount_estimated,
     check_calorie_dense_estimate,
     check_energy,
+    check_fiber_reported,
     check_nutrients_estimated,
     check_weight,
     format_grams,
@@ -134,3 +135,14 @@ def test_over_2000g_warns():
 
 def test_2000g_exactly_does_not_warn():
     assert check_weight(item(grams=2000), 0) == []
+
+
+def test_unreported_fiber_warns():
+    [warning] = check_fiber_reported(item(), match(), 0)
+
+    assert warning.code == "FIBER_NOT_REPORTED"
+    assert "mashed russet potato" in warning.message
+
+
+def test_reported_fiber_does_not_warn():
+    assert check_fiber_reported(item(), match(fiber_g=0), 0) == []

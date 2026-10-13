@@ -15,8 +15,9 @@ WarningCode = Literal[
     "AMOUNT_ESTIMATED",  # the AI guessed a portion size
     "CALORIE_DENSE_ESTIMATE",  # guessed portion of a calorie-dense food
     "NUTRIENTS_ESTIMATED",  # no database match; nutrients are an AI estimate
-    "ENERGY_MISMATCH",  # calories far from 4P + 4C + 9F, likely a bad match
+    "ENERGY_MISMATCH",  # calories far from 4P + 4C + 9F + 7A, likely a bad match
     "OVER_2000G",  # implausibly large single item
+    "FIBER_NOT_REPORTED",  # the record has no fiber value; left out of the total
 ]
 
 # Each food costs a USDA search and a Bedrock call, so cap foods per meal to bound
@@ -59,6 +60,15 @@ class Nutrients(StrictModel):
     fat_g: float = Field(ge=0)
     # 7 kcal/g. Needed to explain the calories of drinks; most foods have none.
     alcohol_g: float = Field(default=0, ge=0)
+    # Total dietary fiber, already counted inside carbs_g. None when the source
+    # doesn't report it (some SR Legacy records), which is not the same as 0.
+    fiber_g: float | None = Field(default=None, ge=0)
+
+    @model_validator(mode="after")
+    def fiber_within_carbs(self) -> "Nutrients":
+        if self.fiber_g is not None and self.fiber_g > self.carbs_g:
+            raise ValueError("fiber_g is part of carbs_g, so it cannot exceed it")
+        return self
 
 
 class FoodMatch(StrictModel):

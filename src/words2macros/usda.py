@@ -34,6 +34,7 @@ NUTRIENT_IDS = {
     1005: "carbs_g",
     1004: "fat_g",
     1018: "alcohol_g",  # optional: many records leave it out, meaning 0
+    1079: "fiber_g",  # optional: some SR Legacy records leave it out, meaning unknown
 }
 
 

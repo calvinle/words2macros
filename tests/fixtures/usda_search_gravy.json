@@ -29,6 +29,12 @@
      "nutrientName": "Energy",
      "nutrientId": 1008,
      "unitName": "KCAL"
+    },
+    {
+     "value": 0.8,
+     "nutrientName": "Fiber, total dietary",
+     "nutrientId": 1079,
+     "unitName": "G"
     }
    ]
   },
@@ -60,6 +66,12 @@
      "nutrientName": "Energy",
      "nutrientId": 1008,
      "unitName": "KCAL"
+    },
+    {
+     "value": 0,
+     "nutrientName": "Fiber, total dietary",
+     "nutrientId": 1079,
+     "unitName": "G"
     }
    ]
   },
@@ -91,6 +103,12 @@
      "nutrientName": "Energy",
      "nutrientId": 1008,
      "unitName": "KCAL"
+    },
+    {
+     "value": 0,
+     "nutrientName": "Fiber, total dietary",
+     "nutrientId": 1079,
+     "unitName": "G"
     }
    ]
   },
@@ -122,6 +140,12 @@
      "nutrientName": "Energy",
      "nutrientId": 1008,
      "unitName": "KCAL"
+    },
+    {
+     "value": 0.4,
+     "nutrientName": "Fiber, total dietary",
+     "nutrientId": 1079,
+     "unitName": "G"
     }
    ]
   },
@@ -153,6 +177,12 @@
      "nutrientName": "Energy",
      "nutrientId": 1008,
      "unitName": "KCAL"
+    },
+    {
+     "value": 0.4,
+     "nutrientName": "Fiber, total dietary",
+     "nutrientId": 1079,
+     "unitName": "G"
     }
    ]
   }

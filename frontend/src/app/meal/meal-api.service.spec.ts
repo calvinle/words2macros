@@ -41,6 +41,21 @@ describe('MealApiService', () => {
     expect(result).toEqual(MEAL);
   });
 
+  it('turns a success response that fails validation into INVALID_RESPONSE', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const bad = { ...MEAL, totals: { ...MEAL.totals, fiber_g: 999 } };
+
+    const error = errorFor((req) => req.flush(bad));
+
+    expect(error).toEqual(
+      new ApiError(
+        'INVALID_RESPONSE',
+        expect.stringContaining('unexpected format'),
+        MEAL.request_id,
+      ),
+    );
+  });
+
   it("maps the backend's error body to its code and message", () => {
     const error = errorFor((req) =>
       req.flush(

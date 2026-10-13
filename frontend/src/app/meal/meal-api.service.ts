@@ -1,8 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, map, throwError } from 'rxjs';
 
 import { environment } from '../../environments/environment';
+import { validateAnalyzeResponse } from './meal-validation';
 import { AnalyzeResponse } from './meal.models';
 
 /** Every failure from analyze() arrives in this one shape. */
@@ -20,9 +21,25 @@ export class MealApiService {
   private http = inject(HttpClient);
 
   analyze(text: string): Observable<AnalyzeResponse> {
-    return this.http
-      .post<AnalyzeResponse>(environment.analyzeUrl, { text })
-      .pipe(catchError((e: HttpErrorResponse) => throwError(() => toApiError(e))));
+    return this.http.post<unknown>(environment.analyzeUrl, { text }).pipe(
+      catchError((e: HttpErrorResponse) => throwError(() => toApiError(e))),
+      map(checked),
+    );
+  }
+}
+
+/** Never pass unvalidated data on, even from our own backend. */
+function checked(body: unknown): AnalyzeResponse {
+  try {
+    return validateAnalyzeResponse(body);
+  } catch (e) {
+    console.error('words2macros: /analyze response failed validation', e, body);
+    const requestId = (body as { request_id?: string } | null)?.request_id;
+    throw new ApiError(
+      'INVALID_RESPONSE',
+      'The server sent a result in an unexpected format, so it was not shown. Try again.',
+      typeof requestId === 'string' ? requestId : undefined,
+    );
   }
 }
 

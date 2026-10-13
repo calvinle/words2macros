@@ -25,6 +25,16 @@
         <dt><span class="dot fat"></span>Fat</dt>
         <dd>{{ totals().fat_g | number: '1.1-1' }} g</dd>
       </div>
+      <div>
+        <dt>Fiber</dt>
+        <dd [attr.title]="fiberIncomplete() ? 'Some foods do not report fiber' : null">
+          @if (totals().fiber_g !== null) {
+            {{ fiberIncomplete() ? '≥ ' : '' }}{{ totals().fiber_g | number: '1.1-1' }} g
+          } @else {
+            Not reported
+          }
+        </dd>
+      </div>
       @if (totals().alcohol_g > 0) {
         <div>
           <dt>Alcohol</dt>

@@ -11,6 +11,7 @@ export const WARNING_SEVERITY: Record<WarningCode, Severity> = {
   NUTRIENTS_ESTIMATED: 'warning',
   ENERGY_MISMATCH: 'warning',
   OVER_2000G: 'warning',
+  FIBER_NOT_REPORTED: 'info',
 };
 
 /** Whole-number percentages of calories from each macro. */
@@ -77,4 +78,14 @@ export const ITEM_CHECKS: { code: WarningCode; passed: string; flagged: string }
     passed: 'Nutrients from the USDA database',
     flagged: 'Nutrients are an AI estimate',
   },
+  {
+    code: 'FIBER_NOT_REPORTED',
+    passed: 'Fiber reported',
+    flagged: 'Fiber not reported (left out of the fiber total)',
+  },
 ];
+
+/** True when some food's fiber is unknown, so the meal's fiber total is a minimum. */
+export function fiberIncomplete(items: ItemResult[]): boolean {
+  return items.some((i) => i.nutrients.fiber_g === null);
+}

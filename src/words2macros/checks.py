@@ -111,6 +111,21 @@ def check_weight(item: ParsedItem, index: int) -> list[MealWarning]:
     ]
 
 
+def check_fiber_reported(item: ParsedItem, match: FoodMatch, index: int) -> list[MealWarning]:
+    if match.per_100g.fiber_g is not None:
+        return []
+    return [
+        MealWarning(
+            code="FIBER_NOT_REPORTED",
+            message=(
+                f"The database record for {label(item)} doesn't report fiber, so the meal's "
+                "fiber total leaves this food out and may be low."
+            ),
+            item_index=index,
+        )
+    ]
+
+
 def check_item(item: ParsedItem, match: FoodMatch, index: int) -> list[MealWarning]:
     """All warnings for one item, in a stable order."""
     return [
@@ -119,4 +134,5 @@ def check_item(item: ParsedItem, match: FoodMatch, index: int) -> list[MealWarni
         *check_nutrients_estimated(item, match, index),
         *check_energy(match, index),
         *check_weight(item, index),
+        *check_fiber_reported(item, match, index),
     ]

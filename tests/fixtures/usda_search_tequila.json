@@ -35,6 +35,12 @@
           "nutrientName": "Alcohol, ethyl",
           "nutrientId": 1018,
           "unitName": "G"
+        },
+        {
+          "value": 0,
+          "nutrientName": "Fiber, total dietary",
+          "nutrientId": 1079,
+          "unitName": "G"
         }
       ]
     },
@@ -71,6 +77,12 @@
           "value": 8.1,
           "nutrientName": "Alcohol, ethyl",
           "nutrientId": 1018,
+          "unitName": "G"
+        },
+        {
+          "value": 0.2,
+          "nutrientName": "Fiber, total dietary",
+          "nutrientId": 1079,
           "unitName": "G"
         }
       ]

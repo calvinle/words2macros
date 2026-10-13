@@ -34,6 +34,14 @@ describe('FoodItemCardComponent', () => {
     );
   });
 
+  it('shows fiber, or that the record does not report it', async () => {
+    const macros = async (item: ItemResult) =>
+      (await render(item)).querySelector('.macros')?.textContent?.replace(/\s+/g, ' ');
+    expect(await macros(MEAL.items[0])).toContain('Fiber 2.4 g');
+    const unreported = { ...STATED_ITEM, nutrients: { ...STATED_ITEM.nutrients, fiber_g: null } };
+    expect(await macros(unreported)).toContain('Fiber not reported');
+  });
+
   it('shows its warnings, styled by severity', async () => {
     const amber: MealWarning = { code: 'ENERGY_MISMATCH', message: 'Check match.', item_index: 0 };
     const el = await render(MEAL.items[0], [MEAL.warnings[0], amber]);

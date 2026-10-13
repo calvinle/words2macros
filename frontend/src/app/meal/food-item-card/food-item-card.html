@@ -21,7 +21,12 @@
       {{ item().nutrients.calories_kcal | number: '1.0-0' }} kcal · P
       {{ item().nutrients.protein_g | number: '1.1-1' }} g · C
       {{ item().nutrients.carbs_g | number: '1.1-1' }} g · F
-      {{ item().nutrients.fat_g | number: '1.1-1' }} g
+      {{ item().nutrients.fat_g | number: '1.1-1' }} g · Fiber
+      @if (item().nutrients.fiber_g !== null) {
+        {{ item().nutrients.fiber_g | number: '1.1-1' }} g
+      } @else {
+        not reported
+      }
       @if (item().nutrients.alcohol_g > 0) {
         · Alcohol {{ item().nutrients.alcohol_g | number: '1.1-1' }} g
       }

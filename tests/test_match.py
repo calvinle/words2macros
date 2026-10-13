@@ -21,6 +21,7 @@ ESTIMATE_REPLY = json.dumps(
         "carbs_g": 5,
         "fat_g": 3.5,
         "alcohol_g": 0,
+        "fiber_g": 0.3,
     }
 )
 
@@ -139,3 +140,13 @@ def test_two_bad_estimates_raise_clear_error():
 
     with pytest.raises(MatchError, match="couldn't be found or estimated"):
         match_item(GRAVY, client, fixture_search("usda_search_xqzvplorbnut.json"))
+
+
+def test_estimate_with_more_fiber_than_carbs_is_retried():
+    bad = json.dumps({**json.loads(ESTIMATE_REPLY), "fiber_g": 9})
+    client = FakeBedrock(bad, ESTIMATE_REPLY)
+
+    match = match_item(GRAVY, client, fixture_search("usda_search_xqzvplorbnut.json"))
+
+    assert match.per_100g.fiber_g == 0.3
+    assert len(client.requests) == 2

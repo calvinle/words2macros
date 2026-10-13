@@ -7,7 +7,11 @@
   </app-warning-line>
 }
 
-<app-meal-totals [totals]="result().totals" [estimated]="estimated() > 0" />
+<app-meal-totals
+  [totals]="result().totals"
+  [estimated]="estimated() > 0"
+  [fiberIncomplete]="fiberIncomplete()"
+/>
 
 @if (estimated() > 0) {
   <app-warning-line class="summary">

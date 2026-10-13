@@ -29,7 +29,7 @@ amounts. Nutrient values come from the
 4. **Validate (code):** every payload is checked by a Pydantic model (see
    [Validation with Pydantic](#validation-with-pydantic)), and sanity checks add warnings:
    estimated amounts, calorie-dense estimates, calories that don't add up from the macros and
-   alcohol (4/4/9/7 kcal per gram), and items over 2,000 g.
+   alcohol (4/4/9/7 kcal per gram), items over 2,000 g, and records that don't report fiber.
 
 ## Architecture
 
@@ -49,8 +49,9 @@ own logs.
 `POST /analyze` with `{"text": "2 scrambled eggs and a slice of toast"}`.
 
 **200 OK** returns the meal: `items` (each with grams, `amount_source`, `assumption`, the matched
-food record and its nutrients, including `alcohol_g`), `totals`, `warnings`, plus the original `text`, a `request_id`
-and `analyzed_at` for tracing.
+food record and its nutrients, including `alcohol_g` and `fiber_g`), `totals`, `warnings`, plus the original `text`, a `request_id`
+and `analyzed_at` for tracing. `fiber_g` is part of `carbs_g` (never more than it) and is `null`
+when the USDA record doesn't report fiber; meal totals then add up only the known values.
 
 Errors share one shape, `{"error": {"code", "message", "request_id"}}`:
 
@@ -209,7 +210,8 @@ def estimated_needs_assumption(self) -> "ParsedItem":
     return self
 ```
 
-`FoodMatch` uses the same pattern to require an `fdc_id` whenever the source is `"usda"`.
+`FoodMatch` uses the same pattern to require an `fdc_id` whenever the source is `"usda"`, and
+`Nutrients` uses it to reject fiber above carbs (USDA counts fiber inside total carbs).
 
 ### Where validation happens
 
@@ -220,6 +222,7 @@ def estimated_needs_assumption(self) -> "ParsedItem":
 | USDA lookup ([`usda.py`](src/words2macros/usda.py)) | search results | `FoodMatch` / `Nutrients`; incomplete records are skipped |
 | Result ([`meal.py`](src/words2macros/meal.py)) | calculated totals and warnings | `MealResult` |
 | API response ([`handler.py`](src/words2macros/handler.py)) | the final body | `AnalyzeResponse` |
+| Browser ([`meal-validation.ts`](frontend/src/app/meal/meal-validation.ts)) | the `/analyze` response | the same rules again; a failure shows an `INVALID_RESPONSE` error |
 
 Bedrock's structured outputs enforce the basic JSON shape of every AI reply. Pydantic then enforces
 the rules a JSON schema can't express, such as the assumption rule above.
