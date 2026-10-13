@@ -28,6 +28,13 @@
 </div>
 
 <div class="actions">
+  <!-- Always in the page, so screen readers announce the message when it appears. -->
+  <div class="undo" role="status">
+    @if (undoText() !== null) {
+      <span>Description cleared.</span>
+      <button matButton type="button" (click)="undo()">Undo</button>
+    }
+  </div>
   <button matButton type="button" [disabled]="busy() || length() === 0" (click)="clear()">
     Clear
   </button>

@@ -1,6 +1,15 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { Component, ElementRef, OnInit, computed, input, output, viewChild } from '@angular/core';
-import { outputFromObservable, toSignal } from '@angular/core/rxjs-interop';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  computed,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { outputFromObservable, takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ErrorStateMatcher } from '@angular/material/core';
@@ -68,6 +77,15 @@ export class MealInputComponent implements OnInit {
   readonly length = computed(() => this.value().length);
   private readonly textarea = viewChild.required<ElementRef<HTMLTextAreaElement>>('textarea');
 
+  /** The text removed by Clear, while Undo is offered; null otherwise. */
+  readonly undoText = signal<string | null>(null);
+
+  constructor() {
+    // Any new text (typing, an example, Undo itself) withdraws the offer, so Undo
+    // never overwrites what is in the box.
+    this.text.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.undoText.set(null));
+  }
+
   ngOnInit(): void {
     if (this.initialText()) this.text.setValue(this.initialText());
   }
@@ -81,9 +99,18 @@ export class MealInputComponent implements OnInit {
     this.text.setValue(text);
   }
 
-  /** Empties the box (and so the saved draft) and puts the cursor back in it. */
+  /** Empties the box (and so the saved draft), puts the cursor back in it and offers Undo. */
   clear(): void {
+    const previous = this.text.value;
     this.text.setValue('');
+    this.undoText.set(previous); // after setValue, whose change event withdraws Undo
+    this.focus();
+  }
+
+  undo(): void {
+    const previous = this.undoText();
+    if (previous === null) return;
+    this.text.setValue(previous);
     this.focus();
   }
 

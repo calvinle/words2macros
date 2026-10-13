@@ -87,6 +87,36 @@ describe('MealInputComponent', () => {
     expect(clearButton().disabled).toBe(true);
   });
 
+  describe('Undo after clearing', () => {
+    const undoButton = () =>
+      [...el.querySelectorAll('button')].find((b) => b.textContent?.trim() === 'Undo');
+
+    async function clearText() {
+      await type('2 eggs');
+      clearButton().click();
+      await fixture.whenStable();
+    }
+
+    it('says the description was cleared and puts it back on Undo', async () => {
+      await clearText();
+      expect(el.querySelector('[role=status]')?.textContent).toContain('Description cleared.');
+
+      undoButton()!.click();
+      await fixture.whenStable();
+
+      expect(textarea().value).toBe('2 eggs');
+      expect(document.activeElement).toBe(textarea());
+      expect(undoButton()).toBeUndefined();
+    });
+
+    it('withdraws Undo once something new is typed', async () => {
+      await clearText();
+      await type('1 banana');
+      expect(undoButton()).toBeUndefined();
+      expect(el.querySelector('[role=status]')?.textContent?.trim()).toBe('');
+    });
+  });
+
   it('disables Clear when the box is empty or while busy', async () => {
     expect(clearButton().disabled).toBe(true);
     await type('2 eggs');
